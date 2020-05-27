@@ -10,6 +10,7 @@ The goal of this project is to re-implement the RSA hashing algorithm in Rust, s
 - [ ] Implement prime number generation
     - [ ] Using Sieve of Eratosthenes
     - [ ] Using Sieve of Atkin ([wikipedia](https://en.wikipedia.org/wiki/Sieve_of_Atkin), [geeksforgeeks](https://www.geeksforgeeks.org/sieve-of-atkin/))
+    - [ ] Look at number field sieves?
 - [ ] Implement RSA Encryption algorithm
     - [ ] Using our RNG
     - [ ] Using system RNG (e.g. /dev/urandom)
@@ -17,3 +18,4 @@ The goal of this project is to re-implement the RSA hashing algorithm in Rust, s
 - [ ] Test RSA Implementation
     - [ ] Compare performance (as in speed) with Rust `rsa` crate
     - [ ] Test security of implementation using [NIST RSA2VS](https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Algorithm-Validation-Program/documents/dss2/rsa2vs.pdf)? (from FIPS 186-4)
+- [ ] Make GUI?
