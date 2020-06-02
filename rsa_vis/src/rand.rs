@@ -7,8 +7,6 @@ const GCC_MOD: u64 = 2147483648;
 const GCC_MULT: u64 = 1103515245;
 /// The increment constant from GCC
 const GCC_INC: u64 = 12345;
-/// The number of iterations I have decided is appropriate
-const ITERATIONS: u64 = 200;
 
 /// This struct represents a random number generator using the linear congruential method (L.C.M.),
 /// since RNG is ultimately a sequence. `Rng` is not accessible outside of the `rand` module,
