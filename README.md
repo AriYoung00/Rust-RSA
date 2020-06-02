@@ -9,7 +9,7 @@ The goal of this project is to re-implement the RSA hashing algorithm in Rust, s
     - [ ] Bitmap visualization of random numbers? (as seen [here](https://www.random.org/analysis/))
 - [ ] Implement prime number generation
     - [x] Using Sieve of Eratosthenes
-    - [ ] Using Sieve of Atkin ([wikipedia](https://en.wikipedia.org/wiki/Sieve_of_Atkin), [geeksforgeeks](https://www.geeksforgeeks.org/sieve-of-atkin/))
+    - [x] Using Sieve of Atkin ([wikipedia](https://en.wikipedia.org/wiki/Sieve_of_Atkin), [geeksforgeeks](https://www.geeksforgeeks.org/sieve-of-atkin/))
     - [ ] Look at number field sieves?
     - [ ] Update: Look at methods specific to cryptography [here](https://en.wikipedia.org/wiki/Generation_of_primes#Large_primes)
 - [ ] Implement RSA Encryption algorithm
