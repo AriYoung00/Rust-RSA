@@ -65,7 +65,7 @@ pub fn new_seed(seed: u64) -> Rng {
 pub fn new() -> Rng {
     let seed: u64 = SystemTime::now().duration_since(UNIX_EPOCH)
         .expect("oh darn something's wrong")
-        .as_millis() as u64;
+        .as_secs();
 
     new_seed(seed)
 }
