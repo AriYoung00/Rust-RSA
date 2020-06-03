@@ -56,7 +56,7 @@ pub fn sieve_of_atkin(limit: usize) -> std::vec::Vec<u32> {
     c) n = (3*x*x)-(y*y) has odd number of
        solutions, x > y and n % 12 = 11 */
     let mut x:i32 = 1;
-    let mut limit32:i32 = limit as i32;
+    let limit32:i32 = limit as i32;
     while x*x < limit32 {
         let mut y = 1;
         while y*y < limit32 {
