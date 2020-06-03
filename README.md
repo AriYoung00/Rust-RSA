@@ -6,7 +6,7 @@ The goal of this project is to re-implement the RSA hashing algorithm in Rust, s
 - [ ] Implement pseudo-random number generation using linear congruential method (recursively)
     - [ ] Check randomness using frequency test
     - [ ] Check randomness using chi squared test?
-    - [ ] Bitmap visualization of random numbers? (as seen [here](https://www.random.org/analysis/))
+    - [x] Bitmap visualization of random numbers? (as seen [here](https://www.random.org/analysis/))
 - [ ] Implement prime number generation
     - [x] Using Sieve of Eratosthenes
     - [x] Using Sieve of Atkin ([wikipedia](https://en.wikipedia.org/wiki/Sieve_of_Atkin), [geeksforgeeks](https://www.geeksforgeeks.org/sieve-of-atkin/))
