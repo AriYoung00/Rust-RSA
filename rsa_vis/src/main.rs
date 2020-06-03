@@ -27,12 +27,12 @@ fn test_sieve_of_atkin(n: usize) {
 
 fn test_rng(n: usize) {
     let mut rng = rand::new();
-    let mut dis: [i32; 10] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+    let mut dist: [i32; 10] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
     for _ in 1..n {
-        dis[rng.next_int(0, 10) as usize] += 1;
+        dist[rng.next_int(0, 10) as usize] += 1;
     }
 
-    for i in 0..10 {
-        println!("{0}: {1}", i, dis[i]);
+    for _ in 0..10 {
+        println!("{0}: {1}", i, dist[i]);
     }
 }

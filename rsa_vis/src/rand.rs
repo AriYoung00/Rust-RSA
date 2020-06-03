@@ -48,7 +48,7 @@ impl Rng {
         (self.x as f64) / (self.m as f64)
     }
 
-    // Return the next random number in the sequence, as an integer in the range [min..max)
+    /// Return the next random number in the sequence, as an integer in the range [min..max)
     pub fn next_int(&mut self, min: u64, max: u64) -> u64 {
         let range: f64 = (max - min) as f64;
 
