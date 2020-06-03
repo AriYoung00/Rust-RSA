@@ -3,7 +3,6 @@ mod rand;
 mod rsa;
 
 fn main() {
-    println!("Hello, world!");
     test_sieve_of_eratosthenes(100);
     test_sieve_of_atkin(100);
     test_rng(10000000);

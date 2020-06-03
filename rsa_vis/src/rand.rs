@@ -37,7 +37,7 @@ impl Rng {
             c: increment,
             m: modulus
         };
-        ret.next(); // So we don't just return the seed as the first value
+        let _ = ret.next(); // So we don't just return the seed as the first value
 
         ret
     }
