@@ -4,8 +4,8 @@ The goal of this project is to re-implement the RSA hashing algorithm in Rust, s
 
 ## TODO:
 - [ ] Implement pseudo-random number generation using linear congruential method (recursively)
-    - [ ] Check randomness using frequency test
-    - [ ] Check randomness using chi squared test?
+    - [x] Check randomness using frequency test
+    - [x] Check randomness using chi squared test?
     - [x] Bitmap visualization of random numbers? (as seen [here](https://www.random.org/analysis/))
 - [ ] Implement prime number generation
     - [x] Using Sieve of Eratosthenes
