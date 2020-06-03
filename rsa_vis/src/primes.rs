@@ -1,3 +1,7 @@
+use num::{BigInt, BigUint};
+use num::FromPrimitive;
+use std::convert::TryInto;
+
 /// Return a list of prime numbers in the range of [2,n]
 ///
 /// # Arguments
@@ -101,4 +105,33 @@ pub fn sieve_of_atkin(limit: usize) -> std::vec::Vec<u32> {
     }
 
     return res;
+}
+
+fn _mod_exp(x: i32, y: u32, mod_p: i32) -> i32 {
+    let mut res: i32 = 1;
+    let mut x = x % mod_p;
+    let mut y = y;
+
+    while y > 0 {
+        if (y % 2) == 1 {
+            res = (res * x) % mod_p
+        }
+
+        y /= 2;
+        x = x.pow(2);
+    }
+
+    res
+}
+
+fn _test_miller_rabin(num: BigUint, accuracy: usize) -> bool {
+    if num.modpow(BigUInt::from(1), BigUInt::from(2)).eq(&BigUint::from(0)) {
+        return false;
+    }
+
+    true
+}
+
+pub fn gen_large_prime(n: usize) -> BigUint {
+    FromPrimitive::from_i32(5).expect("oh darn")
 }

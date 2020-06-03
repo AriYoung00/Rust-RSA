@@ -1,3 +1,5 @@
+extern crate num;
+
 mod primes;
 mod test;
 mod rand;
@@ -11,7 +13,8 @@ fn main() {
     let img = vis::generate_rng_bitmap(512);
     let _ = img.save("./img.bmp");
 
-    println!("chi^2: {}", test::chi_squared_test(200, 10000))
+    println!("chi^2: {}", test::chi_squared_test(200, 10000));
+    rsa::do_thing();
 }
 
 fn test_sieve_of_eratosthenes(n: usize) {
