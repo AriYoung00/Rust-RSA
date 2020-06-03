@@ -48,7 +48,7 @@ impl Rng {
         (self.x as f64) / (self.m as f64)
     }
 
-    // Return the next random number in the sequence, as an integer between `min` and `max`
+    // Return the next random number in the sequence, as an integer in the range [min..max)
     pub fn next_int(&mut self, min: u64, max: u64) -> u64 {
         let range: f64 = (max - min) as f64;
 
@@ -64,8 +64,8 @@ pub fn new_seed(seed: u64) -> Rng {
 /// Returns a new RNG object, seeded with the current Unix time in seconds
 pub fn new() -> Rng {
     let seed: u64 = SystemTime::now().duration_since(UNIX_EPOCH)
-        .expect("oh balls")
-        .as_secs();
+        .expect("oh darn something's wrong")
+        .as_millis() as u64;
 
     new_seed(seed)
 }
