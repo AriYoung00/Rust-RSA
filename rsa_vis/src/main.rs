@@ -1,4 +1,5 @@
 mod primes;
+mod test;
 mod rand;
 mod rsa;
 mod vis;
@@ -9,6 +10,8 @@ fn main() {
     test_rng(10000000);
     let img = vis::generate_rng_bitmap(512);
     let _ = img.save("./img.bmp");
+
+    println!("chi^2: {}", test::chi_squared_test(200, 10000))
 }
 
 fn test_sieve_of_eratosthenes(n: usize) {
@@ -32,7 +35,7 @@ fn test_rng(n: usize) {
         dist[rng.next_int(0, 10) as usize] += 1;
     }
 
-    for _ in 0..10 {
+    for i in 0..10 {
         println!("{0}: {1}", i, dist[i]);
     }
 }
