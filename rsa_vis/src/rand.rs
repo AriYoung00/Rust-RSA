@@ -1,4 +1,5 @@
 use std::time::{SystemTime, UNIX_EPOCH};
+use num::{BigInt, FromPrimitive, ToPrimitive};
 
 /// The modulus constant from the GCC implementation of rand (2^31). We can make this more efficient
 /// with binary trickery if we so choose, since it's just a power of two.
@@ -54,6 +55,26 @@ impl Rng {
 
         min + ((self.next() * range) as u64)
     }
+
+    pub fn next_bigint(&mut self, min: &BigInt, max: &BigInt) {
+        let u64max_big = FromPrimitive::from_u64(u64::MAX).expect("oh gosh darn");
+        if max < u64max_big { // Short circuit if we're retrieving a bigint that's not actually a bigint
+            return FromPrimitive::from_u64(self.next_int(
+                min.to_u64().expect("Unable to unpack min"),
+                max.to_u64().expect("Unable to unpack max")))
+                .expect("Unable to store next_int in BigUint");
+        }
+
+        let diff = max - min;
+        if &diff < u64max_big { // Shirt circuit if the difference is less than u64::max
+            return min + FromPrimitive::from_u64(self.next_int(0, diff.to_u64().expect("Unable to unpack diff")));
+        }
+
+        // Lord forgive me
+        let half = diff / 2;
+        min + self.next_bigint(FromPrimitive::from_i32(0).expect("asdf"), half) +
+            self.next_bigint(half, &diff);
+    }
 }
 
 /// Returns a new RNG object, seeded with the explicitly provided seed
@@ -64,7 +85,7 @@ pub fn new_seed(seed: u64) -> Rng {
 /// Returns a new RNG object, seeded with the current Unix time in seconds
 pub fn new() -> Rng {
     let seed: u64 = SystemTime::now().duration_since(UNIX_EPOCH)
-        .expect("oh darn something's wrong")
+        .expect("Unable to retrieve Unix time")
         .as_secs();
 
     new_seed(seed)
