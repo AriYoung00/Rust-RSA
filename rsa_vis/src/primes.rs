@@ -1,6 +1,8 @@
-use num::{BigInt, BigUint};
+use crate::rand;
+
+use num::BigUint;
 use num::FromPrimitive;
-use std::convert::TryInto;
+use num::traits::{Zero, One, Pow};
 
 /// Return a list of prime numbers in the range of [2,n]
 ///
@@ -107,31 +109,67 @@ pub fn sieve_of_atkin(limit: usize) -> std::vec::Vec<u32> {
     return res;
 }
 
-fn _mod_exp(x: i32, y: u32, mod_p: i32) -> i32 {
-    let mut res: i32 = 1;
-    let mut x = x % mod_p;
-    let mut y = y;
 
-    while y > 0 {
-        if (y % 2) == 1 {
-            res = (res * x) % mod_p
-        }
 
-        y /= 2;
-        x = x.pow(2);
+pub fn _test_miller_rabin(num: &BigUint, accuracy: usize) -> bool {
+    let two: &BigUint = &BigUint::from_i32(2).expect("Unable to unpack 2");
+    let one: BigUint = One::one();
+    let mut rng = rand::new();
+
+    if num.modpow(&one, two) == Zero::zero() {
+        return false;
     }
 
-    res
-}
+    let mut odd_factor: BigUint = num - one.clone();
+    let mut pow_two: u64 = 1;
+    while (odd_factor.modpow(&One::one(), two)) == Zero::zero() {
+        odd_factor /= two;
+        pow_two += 1;
+    }
 
-fn _test_miller_rabin(num: BigUint, accuracy: usize) -> bool {
-    if num.modpow(BigUInt::from(1), BigUInt::from(2)).eq(&BigUint::from(0)) {
+    'outer: for _ in 0..accuracy {
+        let a = rng.next_bigint(&mut two.clone(), &mut (num - two.clone()));
+        let mut x = a.modpow(&odd_factor, num);
+
+        if x == one.clone() || x == (num - one.clone()) {
+            continue 'outer;
+        }
+
+        for _ in 1..(pow_two - 1) {
+            x = x.modpow(two, num);
+            if x == one {
+                return false;
+            }
+            if x == (num - one.clone()) {
+                continue 'outer;
+            }
+        }
+
         return false;
     }
 
     true
 }
 
+fn pow(num: &BigUint, rhs: usize) -> BigUint {
+    let mut res = num.clone();
+    for _ in 0..rhs {
+        res *= num;
+    }
+
+    res
+}
+
 pub fn gen_large_prime(n: usize) -> BigUint {
-    FromPrimitive::from_i32(5).expect("oh darn")
+    let min = pow(&BigUint::from_i32(10).expect("qwerty"), n - 3);
+    let max = pow(&BigUint::from_i32(10).expect("uiop"), n + 3);
+
+    let mut rng = rand::new();
+    let mut rand_bigint = rng.next_bigint(&min, &max);
+
+    while !_test_miller_rabin(&rand_bigint, 100) {
+        rand_bigint = rng.next_bigint(&min, &max);
+    }
+
+    rand_bigint
 }
