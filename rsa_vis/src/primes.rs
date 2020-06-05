@@ -2,7 +2,7 @@ use crate::rand;
 
 use num::BigUint;
 use num::FromPrimitive;
-use num::traits::{Zero, One, Pow};
+use num::traits::{Zero, One};
 
 /// Return a list of prime numbers in the range of [2,n]
 ///
@@ -127,8 +127,15 @@ pub fn _test_miller_rabin(num: &BigUint, accuracy: usize) -> bool {
         pow_two += 1;
     }
 
+    let mut log2 = pow_two;
+    let mut odd_copy = odd_factor.clone();
+    while odd_copy > Zero::zero() {
+        log2 += 1;
+        odd_copy /= two;
+    }
+
     'outer: for _ in 0..accuracy {
-        let a = rng.next_bigint(&mut two.clone(), &mut (num - two.clone()));
+        let a = rng.next_bigint((log2 / 8) as usize);
         let mut x = a.modpow(&odd_factor, num);
 
         if x == one.clone() || x == (num - one.clone()) {
@@ -160,15 +167,18 @@ fn pow(num: &BigUint, rhs: usize) -> BigUint {
     res
 }
 
+/// Returns an `n`-bit prime number
 pub fn gen_large_prime(n: usize) -> BigUint {
-    let min = pow(&BigUint::from_i32(10).expect("qwerty"), n - 3);
-    let max = pow(&BigUint::from_i32(10).expect("uiop"), n + 3);
+    let mut size = n;
+    if n < 8 {
+        size = 8;
+    }
 
     let mut rng = rand::new();
-    let mut rand_bigint = rng.next_bigint(&min, &max);
+    let mut rand_bigint = rng.next_bigint(size / 8);
 
     while !_test_miller_rabin(&rand_bigint, 100) {
-        rand_bigint = rng.next_bigint(&min, &max);
+        rand_bigint = rng.next_bigint(size / 8);
     }
 
     rand_bigint
