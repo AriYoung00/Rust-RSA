@@ -1,5 +1,7 @@
 extern crate num;
 
+use num::{BigUint, FromPrimitive};
+
 mod primes;
 mod test;
 mod rand;
@@ -15,7 +17,10 @@ fn main() {
 
     println!("chi^2: {}", test::chi_squared_test(200, 10000));
     rsa::do_thing();
+
+    test_primes(640);
 }
+
 
 fn test_sieve_of_eratosthenes(n: usize) {
     let l = primes::sieve_of_eratosthenes(n);
@@ -40,5 +45,13 @@ fn test_rng(n: usize) {
 
     for i in 0..10 {
         println!("{0}: {1}", i, dist[i]);
+    }
+}
+
+fn test_primes(n: usize) {
+    let mut i = 8;
+    while i < n {
+        println!("{} bit prime: {}", i, primes::gen_large_prime(i));
+        i += 8;
     }
 }
