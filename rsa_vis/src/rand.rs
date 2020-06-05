@@ -56,27 +56,13 @@ impl Rng {
         min + ((self.next() * range) as u64)
     }
 
-    pub fn next_bigint(&mut self, min: &BigUint, max: &BigUint) -> BigUint {
-        let u64max_big = BigUint::from_u64(u64::MAX).expect("oh gosh darn");
-        let min = min.clone();
-        let max = max.clone();
-        if max < u64max_big { // Short circuit if we're retrieving a bigint that's not actually a bigint
-            return FromPrimitive::from_u64(self.next_int(
-                min.to_u64().expect("Unable to unpack min"),
-                max.to_u64().expect("Unable to unpack max")))
-                .expect("Unable to store next_int in BigUint");
+    pub fn next_bigint(&mut self, num_bytes: usize) -> BigUint {
+        let mut bytes = vec![0_u8; num_bytes];
+        for i in 0..num_bytes {
+            bytes[i] = (self.next() * (u8::MAX as f64)) as u8;
         }
 
-        let diff = max.clone() - min.clone();
-        if diff < u64max_big { // Shirt circuit if the difference is less than u64::max
-            return &min.clone() + BigUint::from_u64(self.next_int(0, diff.to_u64().expect("Unable to unpack diff")))
-                .expect("Oh dear");
-        }
-
-        // Lord forgive me
-        let mut half = diff.clone() / BigUint::from_i32(2).expect("asdfadf");
-        &min + self.next_bigint(&mut BigUint::from_i32(0).expect("asdf"), &mut half) +
-            self.next_bigint(&mut half, &mut diff.clone())
+        BigUint::from_bytes_be(&bytes)
     }
 }
 
