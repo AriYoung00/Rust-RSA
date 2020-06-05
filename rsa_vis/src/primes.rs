@@ -32,6 +32,7 @@ pub fn sieve_of_eratosthenes(n: usize) -> std::vec::Vec<u32> {
     return res;
 }
 
+
 /// Return a list of prime numbers in the range of [2,n]
 ///
 /// # Arguments
@@ -108,7 +109,6 @@ pub fn sieve_of_atkin(limit: usize) -> std::vec::Vec<u32> {
 
     return res;
 }
-
 
 
 pub fn _test_miller_rabin(num: &BigUint, accuracy: usize) -> bool {
