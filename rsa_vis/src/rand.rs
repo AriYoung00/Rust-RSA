@@ -1,5 +1,5 @@
 use std::time::{SystemTime, UNIX_EPOCH};
-use num::{FromPrimitive, ToPrimitive, BigUint};
+use num::BigUint;
 
 /// The modulus constant from the GCC implementation of rand (2^31). We can make this more efficient
 /// with binary trickery if we so choose, since it's just a power of two.

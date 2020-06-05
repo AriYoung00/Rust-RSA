@@ -158,14 +158,6 @@ pub fn _test_miller_rabin(num: &BigUint, accuracy: usize) -> bool {
     true
 }
 
-fn pow(num: &BigUint, rhs: usize) -> BigUint {
-    let mut res = num.clone();
-    for _ in 0..rhs {
-        res *= num;
-    }
-
-    res
-}
 
 /// Returns an `n`-bit prime number
 pub fn gen_large_prime(n: usize) -> BigUint {

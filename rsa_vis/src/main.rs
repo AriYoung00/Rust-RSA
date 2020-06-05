@@ -1,7 +1,5 @@
 extern crate num;
 
-use num::{BigUint, FromPrimitive};
-
 mod primes;
 mod test;
 mod rand;
