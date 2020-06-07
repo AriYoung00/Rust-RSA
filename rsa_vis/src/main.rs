@@ -7,16 +7,17 @@ mod rsa;
 mod vis;
 
 fn main() {
-    test_sieve_of_eratosthenes(100);
-    test_sieve_of_atkin(100);
-    test_rng(10000000);
-    let img = vis::generate_rng_bitmap(512);
-    let _ = img.save("./img.bmp");
-
-    println!("chi^2: {}", test::chi_squared_test(200, 10000));
+    // test_sieve_of_eratosthenes(100);
+    // test_sieve_of_atkin(100);
+    // test_rng(10000000);
+    // let img = vis::generate_rng_bitmap(512);
+    // let _ = img.save("./img.bmp");
+    //
+    // println!("chi^2: {}", test::chi_squared_test(200, 10000));
     // rsa::do_thing();
-
-    test_primes(640);
+    //
+    // test_primes(640);
+    rsa::test_thing();
 }
 
 
@@ -52,4 +53,8 @@ fn test_primes(n: usize) {
         println!("{} bit prime: {}", i, primes::gen_large_prime(i));
         i += 8;
     }
+}
+
+fn test_particular_prime(n: usize) {
+    println!("{} bit prime: {}", n, primes::gen_large_prime(n));
 }
