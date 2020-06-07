@@ -3,6 +3,7 @@ use num::traits::{One, Zero};
 use crate::rand;
 use crate::primes;
 use crate::num::bigint::ToBigInt;
+use std::borrow::Borrow;
 
 const KEY_SIZE: usize = 1024;
 const BLOCK_SIZE: usize = 4; // Block size in number of characters
@@ -77,46 +78,53 @@ fn _gen_key(num_prime_bits: usize) -> ((BigUint, BigUint), BigUint) {
 fn _encrypt_str(msg: &str, key: (BigUint, BigUint)) -> Vec<BigUint> {
     let offset: usize = if (msg.len() % BLOCK_SIZE) == 0 { 0 } else { 1 };
 
-    let mut blocks = vec![0_i32; (msg.len() / BLOCK_SIZE) + offset];
+    let mut blocks = vec![0_u32; (msg.len() / BLOCK_SIZE) + offset];
     let mut block_index = 0;
     let mut block_count = 0;
-    for c in msg.to_ascii_lowercase().chars() {
-        blocks[block_index] += (c as i32) - 96;
+    for c in msg.chars() {
+        blocks[block_index] ^= c as u32;
         block_count += 1;
         if block_count == BLOCK_SIZE {
             block_index += 1;
             block_count = 0;
         } else {
-            blocks[block_index] *= 10;
+            blocks[block_index] <<= 8;
         }
     }
-    println!("enc: {:?}", blocks);
+    print!("enc: [ ");
+    for b in &blocks { print!("{:#b}, ", b); }
+    println!("]");
 
     let mut output: Vec<BigUint> = vec![BigUint::from_i32(0).unwrap();
                                         (msg.len() / BLOCK_SIZE) + offset];
     for (i, block) in blocks.iter().enumerate() {
-        output[i] = BigUint::from_i32(block.clone()).unwrap()
+        output[i] = BigUint::from_u32(block.clone()).unwrap()
             .modpow(&key.1.clone(), &key.0.clone());
-        println!("{}: {}", i, output[i]);
     }
 
     output
 }
 
 fn _decrypt_str(cipher: Vec<BigUint>, privkey: BigUint, pubkey: BigUint) -> String {
-    let mut dec_blocks = vec![0_i32; cipher.len()];
+    let mut dec_blocks = vec![0_u32; cipher.len()];
     for (i, enc_block) in cipher.iter().enumerate() {
         dec_blocks[i] = enc_block.modpow(&privkey.clone(), &pubkey.clone())
-            .to_i32().unwrap();
+            .to_u32().unwrap();
     }
 
-    println!("dec: {:?}", dec_blocks);
-    let mut res: String = String::with_capacity(dec_blocks.len());
-    for mut c in dec_blocks {
+    print!("dec: [ ");
+    for b in &dec_blocks { print!("{:#b}, ", b); }
+    println!("]");
+
+    let mut res: String = String::with_capacity(dec_blocks.len() * BLOCK_SIZE);
+    for mut c in dec_blocks.iter_mut().rev() {
+        let mut c = *c;
         while c > 0 {
-            println!("{}", c % 100);
-            res.push(char::from(((c % 100) + 96) as u8));
-            c /= 100;
+            let char = (c & 0b11111111) as u8;
+            res = char::from(char).to_string().to_owned() + &res;
+            // Mask to get rid of the bytes representing the character we just pulled out of this u32
+            c &= 0b11111111111111111111111100000000;
+            c = c.overflowing_shr(8).0;
         }
     }
 
@@ -125,9 +133,7 @@ fn _decrypt_str(cipher: Vec<BigUint>, privkey: BigUint, pubkey: BigUint) -> Stri
 
 pub fn test_thing() {
     let (pubkey, privkey) = _gen_key(KEY_SIZE / 2);
-    let cipher = _encrypt_str(&"Hello world".to_string(), pubkey.clone());
-    println!("Privkey: {}", privkey);
-    println!("Pubkey[0]: {}", pubkey.0);
+    let cipher = _encrypt_str(&"Hello world, how are you today?".to_string(), pubkey.clone());
     let dec_result = _decrypt_str(cipher, privkey, pubkey.0);
 
     println!("Result: {}", dec_result);
