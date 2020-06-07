@@ -14,18 +14,18 @@ fn _gcd(a: BigUint, b: BigUint) -> BigUint {
     }
 }
 
-fn _mod_inverse(mut a: BigUint, mut m: BigUint) -> BigUint {
+fn _mod_inverse(mut a: BigInt, mut m: BigInt) -> BigUint {
     let mut m0 = m.clone();
-    let mut y: BigUint = BigUint::zero();
-    let mut x: BigUint = BigUint::one();
+    let mut y: BigInt = BigInt::zero();
+    let mut x: BigInt = BigInt::one();
 
     if m == x {
-        return y;
+        return y as BigUint;
     }
 
-    while a > BigUint::one() {
-        let mut q = a.clone() / m.clone();
-        let mut t = m.clone();
+    while a > BigInt::one() {
+        let mut q: BigInt = a.clone() / m.clone();
+        let mut t: BigInt = m.clone();
 
         // m is remainder now, process same as Euclid's algo
         m = a % m;
@@ -37,11 +37,11 @@ fn _mod_inverse(mut a: BigUint, mut m: BigUint) -> BigUint {
         x = t;
     }
     // Make x positive if needed
-    if x < BigUint::zero() {
+    if x < BigInt::zero() {
         x = x + m0;
     }
 
-    return x;
+    return x as BigUint;
 }
 
 fn _gen_key(num_prime_bits: usize) -> ((BigUint, BigUint), BigUint) {
