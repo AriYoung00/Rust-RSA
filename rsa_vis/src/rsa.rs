@@ -84,6 +84,13 @@ fn _gen_key(num_prime_bits: usize) -> ((BigUint, BigUint), BigUint) {
     ((&prime_one * &prime_two, exponent), d)
 }
 
+/// Helper function, encrypts bytes contained in blocks using the given publickey, returns cipher as
+/// a vector of `BigUint`
+///
+/// # Arguments
+///     * `blocks` - Packed vector of `u32`. The encryption algorith is run on each block, resulting in a
+///             corresponding output block in the returned vector
+///     * `key` - Public key to encrypt with, tuple of the form (modulus, exponent) where both are BigUints
 fn _encrypt_bytes(blocks: Vec<u32>, key: (BigUint, BigUint)) -> Vec<BigUint> {
     print!("Pre-Encrypt Blocks: [ ");
     for b in &blocks { print!("{:#b}, ", b); }
@@ -99,10 +106,17 @@ fn _encrypt_bytes(blocks: Vec<u32>, key: (BigUint, BigUint)) -> Vec<BigUint> {
     output
 }
 
-fn _decrypt_bytes(cipher: &Vec<BigUint>, privkey: BigUint, pubkey: BigUint) -> Vec<u32> {
+/// Helper function, decrypts cipher blocks using the given private key and exponent, returning the decrypted
+/// blocks as a vector of `u32`
+///
+/// # Arguments
+///     * `cipher` - The cipher to decrypt, as a reference to a vector of BigUint encrypted blocks
+///     * `privkey` - The private key to use when decrypting the given cipher
+///     * `exponent` - The "exponent" component of the public key, also used for decryption
+fn _decrypt_bytes(cipher: &Vec<BigUint>, privkey: BigUint, exponent: BigUint) -> Vec<u32> {
     let mut dec_blocks = vec![0_u32; cipher.len()];
     for (i, enc_block) in cipher.iter().enumerate() {
-        dec_blocks[i] = enc_block.modpow(&privkey.clone(), &pubkey.clone())
+        dec_blocks[i] = enc_block.modpow(&privkey.clone(), &exponent.clone())
             .to_u32().unwrap();
     }
 
@@ -113,6 +127,11 @@ fn _decrypt_bytes(cipher: &Vec<BigUint>, privkey: BigUint, pubkey: BigUint) -> V
     dec_blocks
 }
 
+/// Helper function, packs a string into a vector of `u32` (which is the return value) to pass to encryption
+/// function
+///
+/// # Arguments
+///     * `msg` - The string to pack into `Vec<u32>`
 fn _pack_string(msg: &str) -> Vec<u32> {
     let offset: usize = if (msg.len() % BLOCK_SIZE) == 0 { 0 } else { 1 };
 
@@ -133,6 +152,10 @@ fn _pack_string(msg: &str) -> Vec<u32> {
     blocks
 }
 
+/// Helper function, unpacks and returns a string from a vector of `u32` returned by decryption function.
+///
+/// # Arguments
+///     * `blocks` - `Vec<u32>` to unpack characters from
 fn _unpack_string(mut blocks: Vec<u32>) -> String {
     let mut res: String = String::new();
     for mut c in blocks.iter_mut().rev() {
@@ -149,11 +172,22 @@ fn _unpack_string(mut blocks: Vec<u32>) -> String {
     res
 }
 
-fn _encrypt_str(msg: &str, key: (BigUint, BigUint)) -> Vec<BigUint> {
+/// Encrypts string `msg` using given public key
+///
+/// # Arguments
+///     * `msg` - String to encrypt
+///     * `pubkey` - Publickey to use to encrypt `msg`, in format (modulus: `BigUint`, exponent: `BigUint')
+fn _encrypt_str(msg: &str, pubkey: (BigUint, BigUint)) -> Vec<BigUint> {
     let packed_string = _pack_string(msg);
-    _encrypt_bytes(packed_string, key)
+    _encrypt_bytes(packed_string, pubkey)
 }
 
+/// Returns cipher decrypted and unpacked as string
+///
+///  # Arguments
+///     * `cipher` - Vector of `BigUint` representing encrypted string
+///     * `privkey` - The private key to use for decryption
+///     * `pubkey` - The exponent component of the public key, also used in decryption
 fn _decrypt_str(cipher: &Vec<BigUint>, privkey: BigUint, pubkey: BigUint) -> String {
     let dec_blocks = _decrypt_bytes(cipher, privkey, pubkey);
     _unpack_string(dec_blocks)
