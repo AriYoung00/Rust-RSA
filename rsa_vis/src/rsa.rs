@@ -44,7 +44,6 @@ fn _mod_inverse(mut a: BigUint, mut m: BigUint) -> BigUint {
     if x < BigInt::zero() {
         x = x + m0;
     }
-    println!("{}", x);
 
     return x.to_biguint().unwrap();
 }
@@ -54,13 +53,19 @@ fn _gen_key(num_prime_bits: usize) -> ((BigUint, BigUint), BigUint) {
     let one: BigUint = One::one();
 
     let prime_one = primes::gen_large_prime(num_prime_bits);
-    let prime_two = primes::gen_large_prime(num_prime_bits);
+    let mut prime_two = primes::gen_large_prime(num_prime_bits);
+    while prime_one == prime_two {
+        prime_two = primes::gen_large_prime(num_prime_bits);
+    }
+
     let prod: BigUint = (prime_one.clone() - one.clone()) * (prime_two.clone() - one.clone());
     let lambda_n = prod / _gcd(prime_one.clone() - one.clone(),
                         prime_two.clone() - one.clone());
 
     let exponent_bits = lambda_n.bits() / 2;
-    let mut exponent = primes::gen_large_prime(exponent_bits);
+    // let mut exponent = primes::gen_large_prime(exponent_bits);
+    let mut exponent = BigUint::from_i32(65_537).unwrap();
+    assert_eq!(_gcd(exponent.clone(), lambda_n.clone()), One::one());
 
     // compute d, the modular multiplicative inverse of e and lambda_n
     // let d: BigUint = _mod_inverse(exponent.clone(), lambda_n.clone());
@@ -85,12 +90,13 @@ fn _encrypt_str(msg: &str, key: (BigUint, BigUint)) -> Vec<BigUint> {
             blocks[block_index] *= 10;
         }
     }
+    println!("enc: {:?}", blocks);
 
     let mut output: Vec<BigUint> = vec![BigUint::from_i32(0).unwrap();
                                         (msg.len() / BLOCK_SIZE) + offset];
     for (i, block) in blocks.iter().enumerate() {
         output[i] = BigUint::from_i32(block.clone()).unwrap()
-            .modpow(&key.0.clone(), &key.1.clone());
+            .modpow(&key.1.clone(), &key.0.clone());
         println!("{}: {}", i, output[i]);
     }
 
@@ -100,14 +106,15 @@ fn _encrypt_str(msg: &str, key: (BigUint, BigUint)) -> Vec<BigUint> {
 fn _decrypt_str(cipher: Vec<BigUint>, privkey: BigUint, pubkey: BigUint) -> String {
     let mut dec_blocks = vec![0_i32; cipher.len()];
     for (i, enc_block) in cipher.iter().enumerate() {
-        println!("blah: {}", enc_block.modpow(&privkey.clone(), &pubkey.clone()));
         dec_blocks[i] = enc_block.modpow(&privkey.clone(), &pubkey.clone())
             .to_i32().unwrap();
     }
 
+    println!("dec: {:?}", dec_blocks);
     let mut res: String = String::with_capacity(dec_blocks.len());
     for mut c in dec_blocks {
         while c > 0 {
+            println!("{}", c % 100);
             res.push(char::from(((c % 100) + 96) as u8));
             c /= 100;
         }
@@ -120,6 +127,7 @@ pub fn test_thing() {
     let (pubkey, privkey) = _gen_key(KEY_SIZE / 2);
     let cipher = _encrypt_str(&"Hello world".to_string(), pubkey.clone());
     println!("Privkey: {}", privkey);
+    println!("Pubkey[0]: {}", pubkey.0);
     let dec_result = _decrypt_str(cipher, privkey, pubkey.0);
 
     println!("Result: {}", dec_result);
