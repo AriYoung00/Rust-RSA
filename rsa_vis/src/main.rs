@@ -14,7 +14,7 @@ fn main() {
     let _ = img.save("./img.bmp");
 
     println!("chi^2: {}", test::chi_squared_test(200, 10000));
-    rsa::do_thing();
+    // rsa::do_thing();
 
     test_primes(640);
 }
