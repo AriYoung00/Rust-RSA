@@ -14,6 +14,36 @@ fn _gcd(a: BigUint, b: BigUint) -> BigUint {
     }
 }
 
+fn _mod_inverse(mut a: BigUint, mut m: BigUint) -> BigUint {
+    let mut m0 = m.clone();
+    let mut y: BigUint = BigUint::zero();
+    let mut x: BigUint = BigUint::one();
+
+    if m == x {
+        return y;
+    }
+
+    while a > BigUint::one() {
+        let mut q = a.clone() / m.clone();
+        let mut t = m.clone();
+
+        // m is remainder now, process same as Euclid's algo
+        m = a % m;
+        a = t;
+        t = y.clone();
+
+        // Update x and y
+        y = x - q * y.clone();
+        x = t;
+    }
+    // Make x positive if needed
+    if x < BigUint::zero() {
+        x = x + m0;
+    }
+
+    return x;
+}
+
 fn _gen_key(num_prime_bits: usize) -> ((BigUint, BigUint), BigUint) {
     let mut rng = rand::new();
     let one: BigUint = One::one();
@@ -26,9 +56,11 @@ fn _gen_key(num_prime_bits: usize) -> ((BigUint, BigUint), BigUint) {
 
     let exponent_bits = lambda_n.bits() / 2;
     let mut exponent = primes::gen_large_prime(exponent_bits);
-    
 
-    ((&prime_one * &prime_two, exponent), BigUint::from_i32(1).unwrap())
+    // compute d, the modular multiplicative inverse of e and lambda_n
+    let d: BigUint = _mod_inverse(exponent.clone(), lambda_n.clone());
+
+    ((&prime_one * &prime_two, exponent), d)
 }
 
 fn _encrypt_str(msg: &str, key: (BigUint, BigUint)) -> Vec<i32> {
