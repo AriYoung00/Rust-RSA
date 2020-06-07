@@ -26,13 +26,7 @@ fn _gen_key(num_prime_bits: usize) -> ((BigUint, BigUint), BigUint) {
 
     let exponent_bits = lambda_n.bits() / 2;
     let mut exponent = primes::gen_large_prime(exponent_bits);
-    // Lord forgive me
-    while _gcd(exponent.clone(), lambda_n.clone()) > One::one() {
-        exponent = primes::gen_large_prime(exponent_bits);
-        println!("Loop");
-    }
-
-
+    
 
     ((&prime_one * &prime_two, exponent), BigUint::from_i32(1).unwrap())
 }
