@@ -4,7 +4,7 @@ use crate::rand;
 use crate::primes;
 
 const KEY_SIZE: usize = 1024;
-const BLOCK_SIZE: usize = 4;
+const BLOCK_SIZE: usize = 4; // Block size in number of characters
 
 fn _gcd(a: BigUint, b: BigUint) -> BigUint {
     return if b == Zero::zero() {
@@ -21,14 +21,14 @@ fn _gen_key(num_prime_bits: usize) -> ((BigUint, BigUint), BigUint) {
     let prime_one = primes::gen_large_prime(num_prime_bits);
     let prime_two = primes::gen_large_prime(num_prime_bits);
     let prod: BigUint = (prime_one.clone() - one.clone()) * (prime_two.clone() - one.clone());
-
     let lambda_n = prod / _gcd(prime_one.clone() - one.clone(),
                         prime_two.clone() - one.clone());
+
     let exponent_bits = lambda_n.bits() / 2;
-    let mut exponent = rng.next_bigint(exponent_bits);
+    let mut exponent = primes::gen_large_prime(exponent_bits);
     // Lord forgive me
-    while exponent.divides(&prod.clone()) {
-        exponent = rng.next_bigint(exponent_bits);
+    while _gcd(exponent.clone(), lambda_n.clone()) > One::one() {
+        exponent = primes::gen_large_prime(exponent_bits);
         println!("Loop");
     }
 
