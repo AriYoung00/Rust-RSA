@@ -1,4 +1,4 @@
-use num::{BigUint, ToPrimitive, FromPrimitive};
+use num::{BigUint, BigInt, ToPrimitive, FromPrimitive};
 use num::traits::{One, Zero};
 use crate::rand;
 use crate::primes;
