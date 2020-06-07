@@ -1,27 +1,40 @@
 use num::{BigUint, Integer, ToPrimitive, FromPrimitive};
-use num::traits::One;
+use num::traits::{One, Zero};
 use crate::rand;
 use crate::primes;
 
 const KEY_SIZE: usize = 1024;
 const BLOCK_SIZE: usize = 4;
 
-fn _gen_key(num_prime_bits: usize) -> (BigUint, BigUint) {
+fn _gcd(a: BigUint, b: BigUint) -> BigUint {
+    return if b == Zero::zero() {
+        a.clone()
+    } else {
+        _gcd(b.clone(), a % b.clone())
+    }
+}
+
+fn _gen_key(num_prime_bits: usize) -> ((BigUint, BigUint), BigUint) {
     let mut rng = rand::new();
     let one: BigUint = One::one();
 
     let prime_one = primes::gen_large_prime(num_prime_bits);
     let prime_two = primes::gen_large_prime(num_prime_bits);
-
     let prod: BigUint = (prime_one.clone() - one.clone()) * (prime_two.clone() - one.clone());
-    let mut exponent = rng.next_bigint(num_prime_bits/4);
+
+    let lambda_n = prod / _gcd(prime_one.clone() - one.clone(),
+                        prime_two.clone() - one.clone());
+    let exponent_bits = lambda_n.bits() / 2;
+    let mut exponent = rng.next_bigint(exponent_bits);
     // Lord forgive me
     while exponent.divides(&prod.clone()) {
-        exponent = rng.next_bigint(num_prime_bits/4);
+        exponent = rng.next_bigint(exponent_bits);
         println!("Loop");
     }
 
-    (&prime_one * &prime_two, exponent)
+
+
+    ((&prime_one * &prime_two, exponent), BigUint::from_i32(1).unwrap())
 }
 
 fn _encrypt_str(msg: &str, key: (BigUint, BigUint)) -> Vec<i32> {
@@ -52,8 +65,11 @@ fn _encrypt_str(msg: &str, key: (BigUint, BigUint)) -> Vec<i32> {
     output
 }
 
+// fn _decrypt_str(msg: &str, key: (BigUint, BigUint)) -> String {
+//
+// }
+
 pub fn test_thing() {
-    let num_prime_bits = 512;
     let (n, e) = _gen_key(KEY_SIZE / 2);
-    println!("(n: {}, e: {})", n, e);
+    println!("(n: {}, e: {})", n.0, n.1);
 }
