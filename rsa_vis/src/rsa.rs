@@ -8,6 +8,7 @@ use std::borrow::Borrow;
 const KEY_SIZE: usize = 1024;
 const BLOCK_SIZE: usize = 4; // Block size in number of characters
 
+/// Return greatest common divisor of elements a and b as a BigUint
 fn _gcd(a: BigUint, b: BigUint) -> BigUint {
     return if b == Zero::zero() {
         a.clone()
@@ -16,7 +17,9 @@ fn _gcd(a: BigUint, b: BigUint) -> BigUint {
     }
 }
 
-fn _mod_inverse(mut a: BigUint, mut m: BigUint) -> BigUint {
+/// Return modular multiplicative inverse of a and m as a BigUint
+fn _modular_multiplicative_inverse(mut a: BigUint, mut m: BigUint) -> BigUint {
+    // This code adapted from GeeksForGeeks: https://www.geeksforgeeks.org/multiplicative-inverse-under-modulo-m/
     let mut a = a.to_bigint().unwrap();
     let mut m = m.to_bigint().unwrap();
 
@@ -37,7 +40,6 @@ fn _mod_inverse(mut a: BigUint, mut m: BigUint) -> BigUint {
         a = t;
         t = y.clone();
 
-        // Update x and y
         y = x - q * y.clone();
         x = t;
     }
@@ -50,28 +52,36 @@ fn _mod_inverse(mut a: BigUint, mut m: BigUint) -> BigUint {
 }
 
 fn _gen_key(num_prime_bits: usize) -> ((BigUint, BigUint), BigUint) {
+    // Algorithm adapted from https://en.wikipedia.org/wiki/RSA_(cryptosystem)#Key_generation
     let mut rng = rand::new();
     let one: BigUint = One::one();
 
+    // 1. Choose distinct prime numbers prime_one and prime_two
     let prime_one = primes::gen_large_prime(num_prime_bits);
     let mut prime_two = primes::gen_large_prime(num_prime_bits);
     while prime_one == prime_two {
         prime_two = primes::gen_large_prime(num_prime_bits);
     }
 
+    // 2. Compute n = prime_one * prime_two (only needed as return val, computed below)
+    // n is used as the modulus for both the public and private keys.
+
+    // 3. Compute lambda_n = lcm(p-1, q-1). Note that lcm(a, b) = abs(a*b} / gcd(a, b).
+    // Here, prime_one > 0 and prime_two > 0, so prime_one*prime_two = abs(prime_one*prime_two)
     let prod: BigUint = (prime_one.clone() - one.clone()) * (prime_two.clone() - one.clone());
     let lambda_n = prod / _gcd(prime_one.clone() - one.clone(),
                         prime_two.clone() - one.clone());
 
-    let exponent_bits = lambda_n.bits() / 2;
-    // let mut exponent = primes::gen_large_prime(exponent_bits);
+    // 4. Choose an integer e s.t. 1 < e < lambda_n, and s.t. e and lambda_n are co-prime
     let mut exponent = BigUint::from_i32(65_537).unwrap();
+    assert!(One::one() < exponent && exponent < lambda_n);
     assert_eq!(_gcd(exponent.clone(), lambda_n.clone()), One::one());
 
-    // compute d, the modular multiplicative inverse of e and lambda_n
-    // let d: BigUint = _mod_inverse(exponent.clone(), lambda_n.clone());
-    let d: BigUint = _mod_inverse(exponent.clone(), lambda_n.clone());
+    // 5. Compute d s.t. d * e ≡ 1 mod lambda_n. d is modular multiplicative inverse of e, lambda_n
+    // d is the private key exponent
+    let d: BigUint = _modular_multiplicative_inverse(exponent.clone(), lambda_n.clone());
 
+    // Return tuple of (public_key, private_key)
     ((&prime_one * &prime_two, exponent), d)
 }
 
