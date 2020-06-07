@@ -41,8 +41,8 @@ pub fn sieve_of_eratosthenes(n: usize) -> std::vec::Vec<u32> {
 ///
 /// * `n` - A usize specifying range in which to generate primes
 pub fn sieve_of_atkin(limit: usize) -> std::vec::Vec<u32> {
+    // This code adapted from GeeksForGeeks: https://www.geeksforgeeks.org/sieve-of-atkin/
     let mut res = Vec::new();
-    // 2 and 3 are known to be prime
     if limit > 2 {
         res.push(2);
     }
@@ -53,7 +53,7 @@ pub fn sieve_of_atkin(limit: usize) -> std::vec::Vec<u32> {
     // Initialise the sieve array with false values
     let mut sieve = vec![false; limit];
 
-    /* Mark sieve[n] is true if one
+    /* Mark sieve[n] as true if one
        of the following is true:
     a) n = (4*x*x)+(y*y) has odd number of
        solutions, i.e., there exist
@@ -102,7 +102,7 @@ pub fn sieve_of_atkin(limit: usize) -> std::vec::Vec<u32> {
         r += 1;
     }
 
-    // Print primes using sieve[]
+    // Append i to res if sieve[i] is true
     for i in 5..limit32 {
         if sieve[i as usize] {
             res.push(i as u32);

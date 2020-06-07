@@ -56,6 +56,7 @@ impl Rng {
         min + ((self.next() * range) as u64)
     }
 
+    /// Return the next random number in the sequence, normalized as a BigUint of size num_bytes
     pub fn next_bigint(&mut self, num_bytes: usize) -> BigUint {
         let mut bytes = vec![0_u8; num_bytes];
         for i in 0..num_bytes {
