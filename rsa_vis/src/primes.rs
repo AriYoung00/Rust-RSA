@@ -4,6 +4,8 @@ use num::BigUint;
 use num::FromPrimitive;
 use num::traits::{Zero, One};
 
+const MILLER_RABIN_ACCURACY: usize = 30;
+
 /// Return a list of prime numbers in the range of [2,n]
 ///
 /// # Arguments
@@ -169,7 +171,7 @@ pub fn gen_large_prime(n: usize) -> BigUint {
     let mut rng = rand::new();
     let mut rand_bigint = rng.next_bigint(size / 8);
 
-    while !_test_miller_rabin(&rand_bigint, 100) {
+    while !_test_miller_rabin(&rand_bigint, MILLER_RABIN_ACCURACY) {
         rand_bigint = rng.next_bigint(size / 8);
     }
 
