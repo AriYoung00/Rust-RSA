@@ -5,6 +5,7 @@ mod test;
 mod rand;
 mod rsa;
 mod vis;
+mod io;
 
 fn main() {
     // test_sieve_of_eratosthenes(100);
@@ -17,7 +18,10 @@ fn main() {
     // rsa::do_thing();
     //
     // test_primes(640);
-    rsa::test_thing();
+    // rsa::test_thing();
+    io::write_key_to_disk(rsa::gen_key());
+    let (pub_key, priv_key) = io::read_key_from_disk();
+    println!("{}\n{}\n{}", pub_key.0, pub_key.1, priv_key);
 }
 
 
