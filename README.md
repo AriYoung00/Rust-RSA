@@ -19,4 +19,9 @@ The goal of this project is to re-implement the RSA hashing algorithm in Rust, s
 - [ ] Test RSA Implementation
     - [ ] Compare performance (as in speed) with Rust `rsa` crate
     - [ ] Test security of implementation using [NIST RSA2VS](https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Algorithm-Validation-Program/documents/dss2/rsa2vs.pdf)? (from FIPS 186-4)
-- [ ] Make GUI?
+~~- [ ] Make GUI?~~
+- [ ] Make CLI interface
+- [ ] File IO stuff
+    - [ ] Read/write keys from/to file
+    - [ ] Read/write cipher from/to file
+    - [ ] Encrypt files?
