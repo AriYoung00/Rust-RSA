@@ -21,19 +21,19 @@ fn main() {
     //
     // test_primes(640);
     // rsa::test_thing();
-    cli::init_cli_interface();
+    // cli::init_cli_interface();
     let (pub_key, priv_key) = rsa::gen_key();
-    io::write_key_to_disk(rsa::gen_key());
-    println!("n: {}", pub_key.0);
-    println!("e: {}", pub_key.1);
-    println!("d: {}", priv_key);
-    // let (pub_key, priv_key) = io::read_key_from_disk();
+    io::write_json_to_disk(rsa::gen_key());
+    // println!("n: {}", pub_key.0);
+    // println!("e: {}", pub_key.1);
+    // println!("d: {}", priv_key);
+    let (pub_key, priv_key) = io::read_key_from_disk().unwrap();
     // println!("n: {}", pub_key.0);
     // println!("e: {}", pub_key.1);
     // println!("d: {}", priv_key);
     // println!("{}\n{}\n{}", pub_key.0, pub_key.1, priv_key);
-    io::encrypt_file("src.txt", "encrypted.txt", pub_key.clone());
-    io::decrypt_file("encrypted.txt", "unencrypted.txt", priv_key.clone(), pub_key.clone().1);
+    // io::encrypt_file("src.txt", "encrypted.txt", pub_key.clone());
+    // io::decrypt_file("encrypted.txt", "unencrypted.txt", priv_key.clone(), pub_key.clone().1);
 }
 
 
