@@ -26,12 +26,12 @@ pub fn write_key_to_disk(key: ((BigUint, BigUint), BigUint)) {
         "n": (key.0).0,
         "e": (key.0).1
     });
-    _write_key_to_disk(&pub_key, "pub_key.txt").expect("Something went wrong reading the file");
+    _write_key_to_disk(&pub_key, "pub_key.txt").expect("Something went wrong writing the file");
 
     let priv_key = json!({
         "d": key.1
     });
-    _write_key_to_disk(&priv_key, "priv_key.txt").expect("Something went wrong reading the file");
+    _write_key_to_disk(&priv_key, "priv_key.txt").expect("Something went wrong writing the file");
 }
 
 fn _write_key_to_disk(key: &Value, path: &str) -> std::io::Result<()> {
@@ -40,14 +40,13 @@ fn _write_key_to_disk(key: &Value, path: &str) -> std::io::Result<()> {
     Ok(())
 }
 
-pub fn read_key_from_disk() -> ((BigUint, BigUint), BigUint) {
-    let pub_key_str = fs::read_to_string("pub_key.txt")
-        .expect("Something went wrong reading the file");
-    let pub_key: PublicKey = serde_json::from_str(&pub_key_str).unwrap();
-    let priv_key_str = fs::read_to_string("priv_key.txt")
-        .expect("Something went wrong reading the file");
-    let priv_key: PrivateKey = serde_json::from_str(&priv_key_str).unwrap();
-    ((pub_key.n, pub_key.e), priv_key.d)
+pub fn read_key_from_disk() -> std::io::Result<((BigUint, BigUint), BigUint)> {
+    let pub_key_str = fs::read_to_string("pub_key.txt")?;
+    let pub_key: PublicKey = serde_json::from_str(&pub_key_str)?;
+    let priv_key_str = fs::read_to_string("priv_key.txt")?;
+    let priv_key: PrivateKey = serde_json::from_str(&priv_key_str)?;
+
+    Ok(((pub_key.n, pub_key.e), priv_key.d))
 }
 
 pub fn encrypt_file(src_path: &str, dest_path: &str, pub_key: (BigUint, BigUint)) -> std::io::Result<()> {
