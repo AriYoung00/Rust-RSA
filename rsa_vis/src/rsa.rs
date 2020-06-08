@@ -84,6 +84,10 @@ fn _gen_key(num_prime_bits: usize) -> ((BigUint, BigUint), BigUint) {
     ((&prime_one * &prime_two, exponent), d)
 }
 
+pub fn gen_key() -> ((BigUint, BigUint), BigUint) {
+    _gen_key(KEY_SIZE / 2)
+}
+
 /// Helper function, encrypts bytes contained in blocks using the given publickey, returns cipher as
 /// a vector of `BigUint`
 ///
