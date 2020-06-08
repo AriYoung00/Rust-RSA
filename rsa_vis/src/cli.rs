@@ -60,9 +60,7 @@ pub fn init_cli_interface() {
                 if stored_key.is_none() {
                     println!("> Error: No stored key");
                     println!("> Either generate one, or read from file using 'rk <filename>'");
-                    continue 'outer;
-                }
-                if parts.len() >= 2 {
+                } else if parts.len() >= 2 {
                     println!("> Encrypting message...");
                     let key = stored_key.clone().unwrap();
                     let res = rsa::encrypt_str(&parts[1..].join(" "), key.0);
@@ -74,7 +72,16 @@ pub fn init_cli_interface() {
                 }
              },
 
-            "wc" => unimplemented!("> Writing cipher to file not yet implemented"),
+            "wc" => {
+                if stored_cipher.is_none() {
+                    println!("> Error: No cipher stored in memory. Please encrypt something.");
+                } else if parts.len() != 2 {
+                    println!("> Usage: `wc [filename`");
+                } else {
+                    println!("> Writing cipher to disk...");
+                    
+                }
+            },
 
             "pc" => match stored_cipher.clone() {
                 Some(t) => {
