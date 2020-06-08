@@ -3,6 +3,7 @@ use std::io::prelude::*;
 use serde::{Deserialize, Serialize};
 use serde_json::{json, Value};
 use num::{BigUint};
+use crate::rsa;
 
 #[derive(Serialize, Deserialize)]
 struct PublicKey {
@@ -13,6 +14,11 @@ struct PublicKey {
 #[derive(Serialize, Deserialize)]
 struct PrivateKey {
     d: BigUint
+}
+
+#[derive(Serialize, Deserialize)]
+struct Cipher {
+    msg: Vec<BigUint>
 }
 
 pub fn write_key_to_disk(key: ((BigUint, BigUint), BigUint)) {
@@ -44,5 +50,33 @@ pub fn read_key_from_disk() -> ((BigUint, BigUint), BigUint) {
     ((pub_key.n, pub_key.e), priv_key.d)
 }
 
-// write cipher of BigUint vals as a json array of 8bit ints to file
-// read cipher from file
+pub fn encrypt_file(src_path: &str, dest_path: &str, pub_key: (BigUint, BigUint)) -> std::io::Result<()> {
+    let msg = fs::read_to_string(src_path)
+        .expect("Something went wrong reading the file");
+    let encrypted_msg = rsa::encrypt_str(&msg, pub_key);
+
+    let cipher = json!({
+        "msg": encrypted_msg
+    });
+
+    _write_key_to_disk(&cipher, dest_path).expect("Something went wrong reading the file");
+
+    Ok(())
+}
+
+pub fn decrypt_file(src_path: &str, dest_path: &str, priv_key: BigUint, pub_key: BigUint) -> std::io::Result<()> {
+    let cipher_str = fs::read_to_string(src_path)
+        .expect("Something went wrong reading the file");
+    let cipher: Cipher = serde_json::from_str(&cipher_str).unwrap();
+
+    // TODO: make this work :o
+    println!("cipher message");
+    for thing in cipher.msg.clone() {
+        println!("{}", thing);
+    }
+
+    let decrypted_msg = rsa::decrypt_str(&cipher.msg, priv_key, pub_key);
+    let mut dest = File::create(dest_path)?;
+    dest.write_all(decrypted_msg.as_ref())?;
+    Ok(())
+}
