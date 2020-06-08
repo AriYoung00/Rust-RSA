@@ -191,16 +191,16 @@ pub fn encrypt_str(msg: &str, pubkey: (BigUint, BigUint)) -> Vec<BigUint> {
 /// # Arguments
 ///     * `cipher` - Vector of `BigUint` representing encrypted string
 ///     * `privkey` - The private key to use for decryption
-///     * `pubkey` - The exponent component of the public key, also used in decryption
-pub fn decrypt_str(cipher: &Vec<BigUint>, privkey: BigUint, pubkey: BigUint) -> String {
-    let dec_blocks = _decrypt_bytes(cipher, privkey, pubkey);
+///     * `exponent` - The exponent component of the public key, also used in decryption
+pub fn decrypt_str(cipher: &Vec<BigUint>, privkey: BigUint, exponent: BigUint) -> String {
+    let dec_blocks = _decrypt_bytes(cipher, privkey, exponent);
     _unpack_string(dec_blocks)
 }
 
 pub fn test_thing() {
     let (pubkey, privkey) = _gen_key(KEY_SIZE / 2);
-    let cipher = _encrypt_str(&"Hello world, how are you today?".to_string(), pubkey.clone());
-    let dec_result = _decrypt_str(&cipher, privkey, pubkey.0);
+    let cipher = encrypt_str(&"Hello world, how are you today?".to_string(), pubkey.clone());
+    let dec_result = decrypt_str(&cipher, privkey, pubkey.0);
 
     println!("Result: {}", dec_result);
 }
