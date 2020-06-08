@@ -181,7 +181,7 @@ fn _unpack_string(mut blocks: Vec<u32>) -> String {
 /// # Arguments
 ///     * `msg` - String to encrypt
 ///     * `pubkey` - Publickey to use to encrypt `msg`, in format (modulus: `BigUint`, exponent: `BigUint')
-fn _encrypt_str(msg: &str, pubkey: (BigUint, BigUint)) -> Vec<BigUint> {
+pub fn encrypt_str(msg: &str, pubkey: (BigUint, BigUint)) -> Vec<BigUint> {
     let packed_string = _pack_string(msg);
     _encrypt_bytes(packed_string, pubkey)
 }
@@ -192,7 +192,7 @@ fn _encrypt_str(msg: &str, pubkey: (BigUint, BigUint)) -> Vec<BigUint> {
 ///     * `cipher` - Vector of `BigUint` representing encrypted string
 ///     * `privkey` - The private key to use for decryption
 ///     * `pubkey` - The exponent component of the public key, also used in decryption
-fn _decrypt_str(cipher: &Vec<BigUint>, privkey: BigUint, pubkey: BigUint) -> String {
+pub fn decrypt_str(cipher: &Vec<BigUint>, privkey: BigUint, pubkey: BigUint) -> String {
     let dec_blocks = _decrypt_bytes(cipher, privkey, pubkey);
     _unpack_string(dec_blocks)
 }
