@@ -1,10 +1,13 @@
 extern crate num;
+// extern crate azul;
 
 mod primes;
 mod test;
 mod rand;
 mod rsa;
 mod vis;
+mod cli;
+
 
 fn main() {
     // test_sieve_of_eratosthenes(100);
@@ -17,8 +20,10 @@ fn main() {
     // rsa::do_thing();
     //
     // test_primes(640);
-    rsa::test_thing();
+    // rsa::test_thing();
+    cli::init_cli_interface();
 }
+
 
 
 fn test_sieve_of_eratosthenes(n: usize) {
