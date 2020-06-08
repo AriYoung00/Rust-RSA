@@ -48,7 +48,7 @@ pub fn init_cli_interface() {
                 println!("> Finished!");
             },
             "wk" => match stored_key.clone() {
-                Some(key) => {asdf::write_key_to_disk(key); println!("> Done!");},
+                Some(key) => {asdf::write_json_to_disk(key); println!("> Done!");},
                 None => println!("> Error: No stored key")
             },
             "rk" => match asdf::read_key_from_disk() {
