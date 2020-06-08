@@ -73,7 +73,7 @@ fn _gen_key(num_prime_bits: usize) -> ((BigUint, BigUint), BigUint) {
 
     // 4. Choose an integer e s.t. 1 < e < lambda_n, and s.t. e and lambda_n are co-prime
     let mut exponent = BigUint::from_i32(65_537).unwrap();
-    assert!(One::one() < exponent && exponent < lambda_n);
+    assert!(one.clone() < exponent.clone() && exponent.clone() < lambda_n.clone());
     assert_eq!(_gcd(exponent.clone(), lambda_n.clone()), One::one());
 
     // 5. Compute d s.t. d * e ≡ 1 mod lambda_n. d is modular multiplicative inverse of e, lambda_n
@@ -184,7 +184,7 @@ fn _encrypt_str(msg: &str, pubkey: (BigUint, BigUint)) -> Vec<BigUint> {
 
 /// Returns cipher decrypted and unpacked as string
 ///
-///  # Arguments
+/// # Arguments
 ///     * `cipher` - Vector of `BigUint` representing encrypted string
 ///     * `privkey` - The private key to use for decryption
 ///     * `pubkey` - The exponent component of the public key, also used in decryption
