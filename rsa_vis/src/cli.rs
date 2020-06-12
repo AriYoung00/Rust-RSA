@@ -78,8 +78,9 @@ pub fn init_cli_interface() {
                 } else if parts.len() != 2 {
                     println!("> Usage: `wc [filename`");
                 } else {
-                    println!("> Writing cipher to disk...");
-                    
+                    print!("> Writing cipher to disk...");
+                    asdf::write_cipher_to_disk(stored_cipher.clone().unwrap().as_ref(), parts[1]);
+                    println!("Done!");
                 }
             },
 
@@ -109,7 +110,25 @@ pub fn init_cli_interface() {
 
             },
 
-            "df" => unimplemented!("> Decrypting cipher from file not yet implemented"),
+            "df" => {
+                if parts.len() != 2 {
+                    println!("> Usage: `df <filename>");
+                } else if stored_key.is_none() {
+                    println!("> Error: No stored key");
+                    println!("> You probably want to read one from disk using 'rk'");
+                } else {
+                    print!("> Reading cipher from disk...");
+                    match asdf::read_cipher_from_disk(parts[1]) {
+                        Ok(c) => {
+                            println!("Done!");
+                            let key = stored_key.clone().unwrap();
+                            println!("> Decryption result: {}", rsa::decrypt_str(&c, key.1, (key.0).0));
+                        },
+
+                        Err(e) => println!("> Error reading cipher from disk"),
+                    }
+                }
+            },
 
             "s" => {
                 if stored_key.is_none() {
