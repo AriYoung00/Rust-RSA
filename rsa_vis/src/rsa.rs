@@ -55,11 +55,12 @@ fn _gen_key(num_prime_bits: usize) -> ((BigUint, BigUint), BigUint) {
     let mut rng = rand::new();
     let one: BigUint = One::one();
 
+    let mut prime_rng = rand::new();
     // 1. Choose distinct prime numbers prime_one and prime_two
-    let prime_one = primes::gen_large_prime(num_prime_bits);
-    let mut prime_two = primes::gen_large_prime(num_prime_bits);
+    let prime_one = primes::gen_large_prime(num_prime_bits, &mut prime_rng);
+    let mut prime_two = primes::gen_large_prime(num_prime_bits, &mut prime_rng);
     while prime_one == prime_two {
-        prime_two = primes::gen_large_prime(num_prime_bits);
+        prime_two = primes::gen_large_prime(num_prime_bits, &mut prime_rng);
     }
 
     // 2. Compute n = prime_one * prime_two (only needed as return val, computed below)
@@ -120,8 +121,14 @@ fn _encrypt_bytes(blocks: Vec<u32>, key: (BigUint, BigUint)) -> Vec<BigUint> {
 fn _decrypt_bytes(cipher: &Vec<BigUint>, privkey: BigUint, modulus: BigUint) -> Vec<u32> {
     let mut dec_blocks = vec![0_u32; cipher.len()];
     for (i, enc_block) in cipher.iter().enumerate() {
-        dec_blocks[i] = enc_block.modpow(&privkey.clone(), &modulus.clone())
-            .to_u32().unwrap();
+        match enc_block.modpow(&privkey.clone(), &modulus.clone())
+            .to_u32() {
+            Some(thing) => dec_blocks[i] = thing,
+            None =>  {
+                println!("> Error: Found garbage value when attempting to decrypt. Your key is probably incorrect.");
+                dec_blocks[i] = 0;
+            }
+        }
     }
 
     print!("Post-Decrypt Blocks: [ ");
@@ -165,8 +172,8 @@ fn _unpack_string(mut blocks: Vec<u32>) -> String {
     for mut c in blocks.iter_mut().rev() {
         let mut c = *c;
         while c > 0 {
-            let char = (c & 0b11111111) as u8;
-            res = char::from(char).to_string().to_owned() + &res;
+            let new_char = (c & 0b11111111) as u8;
+            res = char::from(new_char).to_string().to_owned() + &res;
             // Mask to get rid of the bytes representing the character we just pulled out of this u32
             c &= 0b11111111111111111111111100000000;
             c = c.overflowing_shr(8).0;

@@ -113,10 +113,9 @@ pub fn sieve_of_atkin(limit: usize) -> std::vec::Vec<u32> {
 }
 
 
-pub fn _test_miller_rabin(num: &BigUint, accuracy: usize) -> bool {
+pub fn _test_miller_rabin(num: &BigUint, accuracy: usize, rng: &mut rand::Rng) -> bool {
     let two: &BigUint = &BigUint::from_i32(2).expect("Unable to unpack 2");
     let one: BigUint = One::one();
-    let mut rng = rand::new();
 
     if num.modpow(&one, two) == Zero::zero() {
         return false;
@@ -162,16 +161,14 @@ pub fn _test_miller_rabin(num: &BigUint, accuracy: usize) -> bool {
 
 
 /// Returns an `n`-bit prime number
-pub fn gen_large_prime(n: usize) -> BigUint {
+pub fn gen_large_prime(n: usize, rng: &mut rand::Rng) -> BigUint {
     let mut size = n;
     if n < 8 {
         size = 8;
     }
 
-    let mut rng = rand::new();
     let mut rand_bigint = rng.next_bigint(size / 8);
-
-    while !_test_miller_rabin(&rand_bigint, MILLER_RABIN_ACCURACY) {
+    while !_test_miller_rabin(&rand_bigint, MILLER_RABIN_ACCURACY, rng) {
         rand_bigint = rng.next_bigint(size / 8);
     }
 
