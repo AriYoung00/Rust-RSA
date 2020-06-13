@@ -1,0 +1,84 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+ 
+\title{RSA Encryption Implementation Writeup}
+\author{Ariel Young, Nashir Janmohamed}
+\date{June 14th, 2020}
+  
+\renewcommand*\contentsname{Summary}
+
+\begin{document}
+
+\maketitle
+
+\tableofcontents
+
+\section{Introduction}
+Talk about motivation and application and overall process.
+\section{Theory}
+
+\subsection{RSA Algorithm}
+Give overview of algorithm here, just copy wikipedia
+
+\subsubsection{Random number generation}
+The \textit{linear congruential method} \cite{linearcongruential} $\dots$
+
+\subsubsection{Generating large primes}
+Various approaches were investigated, including using the \textit{Sieve of Eratosthenes} \cite{sieveeratosthenes}, the \textit{Sieve of Atkin} \cite{sieveatkin}, $\dots$. After more research on best practices for generating large primes we learned that an alternative and more scalable approach is to generate random large numbers, and then performing primality tests to determine their viability. The \textit{Miller Rabin test} \cite{millerrabin} $\dots$
+
+\subsubsection{Modular Multiplicative Inverse}
+To compute the exponent used in the private key, we implemented the Extended Euclidean Algorithm for computing the \textit{modular multiplicative inverse} \cite{mmi} $\dots$
+
+
+\section{Implementation}
+\subsection{one subsection for each portion of program}
+Maybe put pseudocode?
+
+
+\section{Analysis}
+\subsection{Chi Squared Test}
+\subsection{Bitmap}
+\subsection{Runtime Analysis}
+Talk about big O to make him excited :o
+
+
+\section{Usage}
+\subsection{CLI}
+Show that using a new key will produce garbage
+
+
+\section{References}
+{\huge{examples pls remove and replace}}
+\begin{thebibliography}{9}
+\bibitem{linearcongruential}
+Add source here
+
+\bibitem{sieveeratosthenes}
+Add source
+
+\bibitem{sieveatkin}
+Add source
+
+\bibitem{millerrabin}
+Add source
+
+\bibitem{mmi}
+Add source
+
+\bibitem{latexcompanion} 
+Michel Goossens, Frank Mittelbach, and Alexander Samarin. 
+\textit{The \LaTeX\ Companion}. 
+Addison-Wesley, Reading, Massachusetts, 1993.
+
+\bibitem{einstein} 
+Albert Einstein. 
+\textit{Zur Elektrodynamik bewegter K{\"o}rper}. (German) 
+[\textit{On the electrodynamics of moving bodies}]. 
+Annalen der Physik, 322(10):891–921, 1905.
+
+\bibitem{knuthwebsite} 
+Knuth: Computers and Typesetting,
+\\\texttt{http://www-cs-faculty.stanford.edu/\~{}uno/abcde.html}
+\end{thebibliography}
+         
+\end{document}

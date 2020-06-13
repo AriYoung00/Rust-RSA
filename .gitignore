@@ -7,3 +7,9 @@ target/
 
 rsa_vis/img.bmp
 .idea/
+
+# LaTex generated files
+*.aux
+*.log
+*.synctex.gz
+*.toc
