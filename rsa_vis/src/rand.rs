@@ -74,9 +74,9 @@ pub fn new_seed(seed: u64) -> Rng {
 
 /// Returns a new RNG object, seeded with the current Unix time in seconds
 pub fn new() -> Rng {
-    let seed: u64 = SystemTime::now().duration_since(UNIX_EPOCH)
+    let seed: u64 = (SystemTime::now().duration_since(UNIX_EPOCH)
         .expect("Unable to retrieve Unix time")
-        .as_secs();
+        .as_micros() * 100) as u32 as u64;
 
     new_seed(seed)
 }
