@@ -1,7 +1,16 @@
 \documentclass{article}
 \usepackage[utf8]{inputenc}
+\usepackage{hyperref}
+
+\hypersetup{
+    colorlinks,
+    citecolor=black,
+    filecolor=black,
+    linkcolor=black,
+    urlcolor=black
+}
  
-\title{RSA Encryption Implementation Writeup}
+\title{RSA Encryption Final Project}
 \author{Ariel Young, Nashir Janmohamed}
 \date{June 14th, 2020}
   
@@ -10,21 +19,38 @@
 \begin{document}
 
 \maketitle
-
 \tableofcontents
 
 \section{Introduction}
-Talk about motivation and application and overall process.
+RSA seemed cool, so we decided to implement it.
 \section{Theory}
 
 \subsection{RSA Algorithm}
-Give overview of algorithm here, just copy wikipedia
+Given two very large (in our case, 512-bit, ~150 digit) prime numbers $p$ and $q$, it can be proven that the product $n = pq$ cannot be factored in any reasonable amount of time using modern computing hardware. This is the basis for the RSA cryptographic system. \textit{TODO: This paragraph needs work, expansion}
+
+In addition to $n$, the two other components required by RSA are the encryption exponent, $e$, and the decryption exponent, $d$. We should choose $e$ such that $e$ is coprime to the product $(p - 1)(q - 1)$. An accepted practice is to choose a constant prime value for $e$, rather than computing a random coprime value. In our implementation, we have set $e$ to be the constant $2^{16} + 1 = 65,537$. This choice of $e$ is generally regarded as more secure than smaller primes, and also allows for more efficient decryption \cite{rsa_attacks}. The public key is formed by the pair $(n,\, e)$.
+
+After having chosen $p$, $q$, and $e$, we can compute our decryption exponent $d$, such that $d*e \equiv 1 \;(\textbf{mod}\,(p - 1)(q - 1))$. In our implementation, we are computing the solution for $d$ by using the Extended Euclidian Algorithm to solve for the coefficients of Bézout's identity, which is both more efficient and far more scalable than other solutions. This increased efficiency was necessary because of the size of the primes our implementation uses. The private key is the formed by the pair $(n,\, d)$.
+
+From here, the rest of the algorithm is relatively simple. After packing the characters from a message into integers (we used 32 bit integers, each of which holds 4 ASCII characters), the cipher $c_i$ for each packed block $m_i$ can be computed using the formula:
+\[ c_i = m_i^e\, \textbf{mod} \, n \]
+Although our implementation does not have this feature (we store ciphers as arrays of unsigned 8-bit integers in JSON files for transport), the ciphers can be reassembled into one string. Many implementations also perform some form of symmetric encryption on this string before outputting it.
+
+In order to decrypt, we can find the packed value $m_i$ from each cipher block $c_i$ using the formula:
+	\[ m_i = c_i^d \,\textbf{mod}\, n \]
+At this point, the original text of the message can be unpacked and fully recovered.
 
 \subsubsection{Random number generation}
-The \textit{linear congruential method} \cite{linearcongruential} $\dots$
+To implement random number generation, we used the Linear Congruential Method. This is a recursive sequence of pseudo-random numbers, defined by the relation:
+\[ x_n = (ax_{n - 1}) \textbf{ mod } m \]
+In this relation, $a$ is a multiplicative constant, $c$ is an additive constant, and $m$ is the modulus (also a constant). For these values, we have chosen to mirror those used by the glibc implementation of the linear congruential method. Our seed $x_0$ is the current Unix time, in microseconds. In order to normalize the output of our random number generator, we divide by the modulus before returning the result of each iteration.
+
+An important note is that our random number generator is most definitely not secure. While it passes the Chi squared test, we still have a direct linear dependence on the initial seed, which most secure implementations (particularly glibc) usually avoid with an additional recursive term \cite{lcm}. Our generator would most likely fail the Spectral test \cite{spectral}.
 
 \subsubsection{Generating large primes}
-Various approaches were investigated, including using the \textit{Sieve of Eratosthenes} \cite{sieveeratosthenes}, the \textit{Sieve of Atkin} \cite{sieveatkin}, $\dots$. After more research on best practices for generating large primes we learned that an alternative and more scalable approach is to generate random large numbers, and then performing primality tests to determine their viability. The \textit{Miller Rabin test} \cite{millerrabin} $\dots$
+Initially, we had intended to use prime number sieves and random selection to generate our primes $p$ and $q$. Various approaches were investigated, including using the \textit{Sieve of Eratosthenes} \cite{sieveeratosthenes}, and then the \textit{Sieve of Atkin} \cite{sieveatkin} when we realized that Eratosthenes was not sufficiently efficient. However, this approach has two main flaws. The first of these is that prime number sieves generate \textit{all} prime numbers under a certain boundary, and random selection from these sets could yield two values of drastically different sizes. Optimally, $p$ and $q$ should differ by (at most) a few orders of magnitude. The second (and more notable) flaw was that we only needed two primes, not all primes below some limit. Moreover, these primes must be extremely large, of a size where sieves become entirely impractical.
+
+Thus, we eventually settled on implementing the Miller-Rabin primality test.
 
 \subsubsection{Modular Multiplicative Inverse}
 To compute the exponent used in the private key, we implemented the Extended Euclidean Algorithm for computing the \textit{modular multiplicative inverse} \cite{mmi} $\dots$
@@ -39,7 +65,7 @@ Maybe put pseudocode?
 \subsection{Chi Squared Test}
 \subsection{Bitmap}
 \subsection{Runtime Analysis}
-Talk about big O to make him excited :o
+Talk about big O to make him excited :o \textit{bruh this takes so long to run it might as well be big P}
 
 
 \section{Usage}
@@ -48,13 +74,26 @@ Show that using a new key will produce garbage
 
 
 \section{References}
-{\huge{examples pls remove and replace}}
-\begin{thebibliography}{9}
-\bibitem{linearcongruential}
-Add source here
+\begin{thebibliography}{6}
+\bibitem{rsa_attacks}
+Twenty Years of Attacks on the RSA Cryptosystem.
+\textit{Dan Boneh}
+\\\url{https://crypto.stanford.edu/~dabo/pubs/papers/RSA-survey.pdf}
+
+\bibitem{lcm}
+The GLIBC random number generator.
+\textit{Peter Selinger}
+\\\url{https://www.mscs.dal.ca/~selinger/random/}
+
+\bibitem{spectral}
+Spectral test.
+\textit{Wikipedia contributors}
+\\\url{https://en.wikipedia.org/wiki/Spectral_test}
 
 \bibitem{sieveeratosthenes}
-Add source
+Eratosthenes, sieve of.
+\textit{Encyclopedia of Mathematics}\\
+\url{http://encyclopediaofmath.org/index.php?title=Eratosthenes,_sieve_of&oldid=34160}
 
 \bibitem{sieveatkin}
 Add source
@@ -64,21 +103,6 @@ Add source
 
 \bibitem{mmi}
 Add source
-
-\bibitem{latexcompanion} 
-Michel Goossens, Frank Mittelbach, and Alexander Samarin. 
-\textit{The \LaTeX\ Companion}. 
-Addison-Wesley, Reading, Massachusetts, 1993.
-
-\bibitem{einstein} 
-Albert Einstein. 
-\textit{Zur Elektrodynamik bewegter K{\"o}rper}. (German) 
-[\textit{On the electrodynamics of moving bodies}]. 
-Annalen der Physik, 322(10):891–921, 1905.
-
-\bibitem{knuthwebsite} 
-Knuth: Computers and Typesetting,
-\\\texttt{http://www-cs-faculty.stanford.edu/\~{}uno/abcde.html}
 \end{thebibliography}
          
 \end{document}
