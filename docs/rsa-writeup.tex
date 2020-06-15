@@ -60,9 +60,12 @@ Thus, we eventually settled on implementing the Miller-Rabin primality test. The
 
 \section{Analysis}
 \subsection{Chi Squared Test}
+\label{chi}
 Computing the Chi Squared value for our random number generator, the resulting $p$-value would seem to imply that our distribution is truly random. However, the Chi Squared test is not definitive for random number generators; many generators which pass Chi-Squared do not pass the Spectral test.
 
 \subsection{Bitmap}
+Another way to assess the performance of a random number generator is by inspection. A bitmap visualization of the output of the random number generator (which produces values in the range [0,1)) was created with each pixel assigned a value of 0 or 1 - 0 if the generated value is less than 0.5, and 1 otherwise. Though a seemingly imprecise and qualitative test in comparison to the more quantitative Chi squared test [ref \nameref{chi}] or the Spectral test \cite{spectral}, according to Matson \cite{matson}, the ability of the human brain to recognize patterns is the fundamental basis of human intelligence. Visualizing successive results of the RNG gives an alternative means of assessing the ``randomness''.
+
 \subsection{Runtime Analysis}
 Talk about big O to make him excited :o \textit{bruh this takes so long to run it might as well be big P}
 
@@ -104,6 +107,9 @@ Spectral test.
 Eratosthenes, sieve of.
 \textit{Encyclopedia of Mathematics}\\
 \url{http://encyclopediaofmath.org/index.php?title=Eratosthenes,_sieve_of&oldid=34160}
+
+\bibitem{matson}
+Mattson MP. Superior pattern processing is the essence of the evolved human brain. Front Neurosci. 2014;8:265. Published 2014 Aug 22. doi:10.3389/fnins.2014.00265
 
 \bibitem{sieveatkin}
 Add source

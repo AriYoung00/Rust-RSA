@@ -13,3 +13,4 @@ rsa_vis/img.bmp
 *.log
 *.synctex.gz
 *.toc
+*.dvi
