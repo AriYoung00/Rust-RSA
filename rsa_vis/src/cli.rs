@@ -6,9 +6,9 @@ use std::error::Error;
 
 fn print_help() {
     println!("Key generation: ");
-    println!("\t k -> generate new key and store in memory");
-    println!("\t wk -> write key stored in memory to file");
-    println!("\t rk <filename> -> read key from <filename>");
+    println!("\t k -> Generate new key and store in memory");
+    println!("\t wk -> Write key stored in memory to file");
+    println!("\t rk  -> Read key from disk. Must be present in current directory.");
 
     println!("Encryption: ");
     println!("\t e <message> -> Encrypt message using stored key, storing cipher in memory.");
