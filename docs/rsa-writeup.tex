@@ -91,7 +91,7 @@ Talk about big O to make him excited :o \textit{bruh this takes so long to run i
 
 \section{Notes}
 \subsection{Cosmic Rays}
-An IBM study in the 1990s concluded that approximately one random bit flip will occur per month, per 256 MB of RAM \cite{cosmic}. The probability of a random bit flip of one byte is $1.4 x 10^{-15}$ per second. When generating a new key, we typically spend ~20 seconds running consecutive Miller-Rabin tests, on average. Our Miller-Rabin test runs on 512-bit integers. Thus, the probability of some random bit flip occuring on the input to our Miller-Rabin test while it runs is $1.4 * 10^{-15} * 20 * 512 = 1.4336 * 10^{-11}$.
+An IBM study in the 1990s concluded that approximately one random bit flip will occur per month, per 256 MB of RAM \cite{cosmic}. The probability of a random bit flip of one byte is thus $1 / 256000 / (30 * 24 * 60 * 60) \approx 4.519 * 10^{-11}$ per second. When generating a new key, we typically spend ~20 seconds running consecutive Miller-Rabin tests, on average. Our Miller-Rabin test runs on 512-bit integers. Thus, the probability of some random bit flip occuring on the input to our Miller-Rabin test while it runs is $4.627 * 10^{-7} * 20 * 512 \approx 4.628 * 10^{-7}$.
 
 The worst-case probability of any given Miller-Rabin test falsely identifying some random composite number as prime is approximately $4^{-k }$, where $k$ is the number of iterations of the test performed \cite{wolfram}. In our implementation, we perform 30 iterations. Thus, the (worst-case) probability of some composite number passing our implementation of Miller-Rabin is approximately $4^{-30} \approx 8.674 * 10^{-19}$, significantly less than the probability of a random bit flip due to cosmic rays while it runs.
 
