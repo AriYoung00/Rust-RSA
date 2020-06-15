@@ -12,4 +12,14 @@
 \BOOKMARK [2][-]{subsection.4.3}{Runtime Analysis}{section.4}% 12
 \BOOKMARK [1][-]{section.5}{Usage}{}% 13
 \BOOKMARK [2][-]{subsection.5.1}{CLI}{section.5}% 14
-\BOOKMARK [1][-]{section.6}{References}{}% 15
+\BOOKMARK [1][-]{section.6}{Implementation}{}% 15
+\BOOKMARK [2][-]{subsection.6.1}{one subsection for each portion of program}{section.6}% 16
+\BOOKMARK [1][-]{section.7}{Analysis}{}% 17
+\BOOKMARK [2][-]{subsection.7.1}{Chi Squared Test}{section.7}% 18
+\BOOKMARK [2][-]{subsection.7.2}{Bitmap}{section.7}% 19
+\BOOKMARK [2][-]{subsection.7.3}{Runtime Analysis}{section.7}% 20
+\BOOKMARK [1][-]{section.8}{Usage}{}% 21
+\BOOKMARK [2][-]{subsection.8.1}{CLI}{section.8}% 22
+\BOOKMARK [1][-]{section.9}{Notes}{}% 23
+\BOOKMARK [2][-]{subsection.9.1}{Cosmic Rays}{section.9}% 24
+\BOOKMARK [1][-]{section.10}{References}{}% 25

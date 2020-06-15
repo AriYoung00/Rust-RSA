@@ -22,11 +22,11 @@
 \tableofcontents
 
 \section{Introduction}
-RSA seemed cool, so we decided to implement it.
+RSA seemed cool, so we decided to implement it. Initially, our goal was to have a cryptographically secure (if not fast) implementation of RSA. While at first we thought that we had achieved this goal, upon further review, there are several notable issues with our implementation.
 \section{Theory}
 
 \subsection{RSA Algorithm}
-Given two very large (in our case, 512-bit, ~150 digit) prime numbers $p$ and $q$, it can be proven that the product $n = pq$ cannot be factored in any reasonable amount of time using modern computing hardware. This is the basis for the RSA cryptographic system. \textit{TODO: This paragraph needs work, expansion}
+Given two very large (in our case, 512-bit, ~150 digit) prime numbers $p$ and $q$, the product $n = pq$ cannot be factored in any reasonable amount of time using modern computing hardware (due to the lack of an efficient factoring algorithm). This is the basis for the RSA cryptographic system. \textit{TODO: This paragraph needs work, expansion}
 
 In addition to $n$, the two other components required by RSA are the encryption exponent, $e$, and the decryption exponent, $d$. We should choose $e$ such that $e$ is coprime to the product $(p - 1)(q - 1)$. An accepted practice is to choose a constant prime value for $e$, rather than computing a random coprime value. In our implementation, we have set $e$ to be the constant $2^{16} + 1 = 65,537$. This choice of $e$ is generally regarded as more secure than smaller primes, and also allows for more efficient decryption \cite{rsa_attacks}. The public key is formed by the pair $(n,\, e)$.
 
@@ -43,18 +43,36 @@ At this point, the original text of the message can be unpacked and fully recove
 \subsubsection{Random number generation}
 To implement random number generation, we used the Linear Congruential Method. This is a recursive sequence of pseudo-random numbers, defined by the relation:
 \[ x_n = (ax_{n - 1}) \textbf{ mod } m \]
-In this relation, $a$ is a multiplicative constant, $c$ is an additive constant, and $m$ is the modulus (also a constant). For these values, we have chosen to mirror those used by the glibc implementation of the linear congruential method. Our seed $x_0$ is the current Unix time, in microseconds. In order to normalize the output of our random number generator, we divide by the modulus before returning the result of each iteration.
+In this relation, $a$ is a multiplicative constant, $c$ is an additive constant, and $m$ is the modulus (also a constant). For these values, we have chosen to mirror those used by the glibc implementation of the linear congruential method. Our seed $x_0$ is the current Unix time, in microseconds. In order to normalize the output of our random number generator, we divide by the modulus before returning the result of each iteration, which returns an output in the range $[0,\, 1)$.
 
 An important note is that our random number generator is most definitely not secure. While it passes the Chi squared test, we still have a direct linear dependence on the initial seed, which most secure implementations (particularly glibc) usually avoid with an additional recursive term \cite{lcm}. Our generator would most likely fail the Spectral test \cite{spectral}.
 
 \subsubsection{Generating large primes}
 Initially, we had intended to use prime number sieves and random selection to generate our primes $p$ and $q$. Various approaches were investigated, including using the \textit{Sieve of Eratosthenes} \cite{sieveeratosthenes}, and then the \textit{Sieve of Atkin} \cite{sieveatkin} when we realized that Eratosthenes was not sufficiently efficient. However, this approach has two main flaws. The first of these is that prime number sieves generate \textit{all} prime numbers under a certain boundary, and random selection from these sets could yield two values of drastically different sizes. Optimally, $p$ and $q$ should differ by (at most) a few orders of magnitude. The second (and more notable) flaw was that we only needed two primes, not all primes below some limit. Moreover, these primes must be extremely large, of a size where sieves become entirely impractical.
 
-Thus, we eventually settled on implementing the Miller-Rabin primality test.
+Thus, we eventually settled on implementing the Miller-Rabin primality test. The Miller-Rabin primality test is an extension of Fermat's primality test, which in turn makes use of Fermat's little theorem. The Miller-Rabin test, although it is probabilistic rather than deterministic, corrects for the case in which Fermat's little theorem fails (for numbers that aren't coprime), and returns (within some degree of certainty) whether or not a particular number is prime. For large numbers, with a resonable number of iterations, the likelihood that the Miller-Rabin primality test fails is approximately equivalent to the likelihood that some random bit flip due to cosmic rays is introduced to relevant memory while the calculations are performed (see notes).
 
 \subsubsection{Modular Multiplicative Inverse}
 To compute the exponent used in the private key, we implemented the Extended Euclidean Algorithm for computing the \textit{modular multiplicative inverse} \cite{mmi} $\dots$
 
+
+\section{Implementation}
+\subsection{one subsection for each portion of program}
+Maybe put pseudocode?
+
+
+\section{Analysis}
+\subsection{Chi Squared Test}
+Computing the Chi Squared value for our random number generator, the resulting $p$-value would seem to imply that our distribution is truly random. However, the Chi Squared test is not definitive for random number generators; many generators which pass Chi-Squared do not pass the Spectral test.
+
+\subsection{Bitmap}
+\subsection{Runtime Analysis}
+Talk about big O to make him excited :o \textit{bruh this takes so long to run it might as well be big P}
+
+
+\section{Usage}
+\subsection{CLI}
+Show that using a new key will produce garbage
 
 \section{Implementation}
 \subsection{one subsection for each portion of program}
@@ -69,8 +87,15 @@ Talk about big O to make him excited :o \textit{bruh this takes so long to run i
 
 
 \section{Usage}
-\subsection{CLI}
-Show that using a new key will produce garbage
+\subsection{CLI}(need citation, remove otherwise)
+
+\section{Notes}
+\subsection{Cosmic Rays}
+An IBM study in the 1990s concluded that approximately one random bit flip will occur per month, per 256 MB of RAM \cite{cosmic}. The probability of a random bit flip of one byte is $1.4 x 10^{-15}$ per second. When generating a new key, we typically spend ~20 seconds running consecutive Miller-Rabin tests, on average. Our Miller-Rabin test runs on 512-bit integers. Thus, the probability of some random bit flip occuring on the input to our Miller-Rabin test while it runs is $1.4 * 10^{-15} * 20 * 512 = 1.4336 * 10^{-11}$.
+
+The worst-case probability of any given Miller-Rabin test falsely identifying some random composite number as prime is approximately $4^{-k }$, where $k$ is the number of iterations of the test performed \cite{wolfram}. In our implementation, we perform 30 iterations. Thus, the (worst-case) probability of some composite number passing our implementation of Miller-Rabin is approximately $4^{-30} \approx 8.674 * 10^{-19}$, significantly less than the probability of a random bit flip due to cosmic rays while it runs.
+
+Note that this is extremely informal, and I am probably incorrect about some aspect of this (I never took statistics). However, also consider that the element size of modern computing hardware is much smaller than it was in the 1990s (and thus the probability of a random bit flip is significantly higher). Additionally, we are considering the worst-case probability of Miller-Rabin failing; from what I have read, the average probability is much closer to $8^{-k}$.
 
 
 \section{References}
@@ -103,6 +128,18 @@ Add source
 
 \bibitem{mmi}
 Add source
+
+\bibitem{bmp}
+"Statistical Analysis." Random.org
+\\\url{https://www.random.org/analysis/}
+
+\bibitem{cosmic}
+Simonite, Tom. "Should every computer chip have a cosmic ray detector?" \textit{New Scientist}
+\\\url{https://web.archive.org/web/20111202020146/https://www.newscientist.com/blog/technology/2008/03/do-we-need-cosmic-ray-alerts-for.html}
+
+\bibitem{wolfram}
+Weisstein, Eric W. "Rabin-Miller Strong Pseudoprime Test." From \textit{MathWorld}--A Wolfram Web Resource.
+\\\url{https://mathworld.wolfram.com/Rabin-MillerStrongPseudoprimeTest.html}
 \end{thebibliography}
          
 \end{document}
