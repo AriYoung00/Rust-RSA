@@ -27,40 +27,40 @@ fn main() {
 }
 
 
-fn test_sieve_of_eratosthenes(n: usize) {
-    let l = primes::sieve_of_eratosthenes(n);
-    for i in l {
-        println!("{}", i);
-    }
-}
+// fn test_sieve_of_eratosthenes(n: usize) {
+//     let l = primes::sieve_of_eratosthenes(n);
+//     for i in l {
+//         println!("{}", i);
+//     }
+// }
 
-fn test_sieve_of_atkin(n: usize) {
-    let l = primes::sieve_of_atkin(n);
-    for i in l {
-        println!("{}", i);
-    }
-}
+// fn test_sieve_of_atkin(n: usize) {
+//     let l = primes::sieve_of_atkin(n);
+//     for i in l {
+//         println!("{}", i);
+//     }
+// }
 
-fn test_rng(n: usize) {
-    let mut rng = rand::new();
-    let mut dist: [i32; 10] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
-    for _ in 1..n {
-        dist[rng.next_int(0, 10) as usize] += 1;
-    }
+// fn test_rng(n: usize) {
+//     let mut rng = rand::new();
+//     let mut dist: [i32; 10] = [0, 0, 0, 0, 0, 0, 0, 0, 0, 0];
+//     for _ in 1..n {
+//         dist[rng.next_int(0, 10) as usize] += 1;
+//     }
 
-    for i in 0..10 {
-        println!("{0}: {1}", i, dist[i]);
-    }
-}
+//     for i in 0..10 {
+//         println!("{0}: {1}", i, dist[i]);
+//     }
+// }
 
-fn test_primes(n: usize) {
-    let mut i = 8;
-    while i < n {
-        println!("{} bit prime: {}", i, primes::gen_large_prime(i));
-        i += 8;
-    }
-}
+// fn test_primes(n: usize) {
+//     let mut i = 8;
+//     while i < n {
+//         println!("{} bit prime: {}", i, primes::gen_large_prime(i));
+//         i += 8;
+//     }
+// }
 
-fn test_particular_prime(n: usize) {
-    println!("{} bit prime: {}", n, primes::gen_large_prime(n));
-}
+// fn test_particular_prime(n: usize) {
+//     println!("{} bit prime: {}", n, primes::gen_large_prime(n));
+// }
