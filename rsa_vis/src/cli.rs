@@ -8,7 +8,7 @@ fn print_help() {
     println!("Key generation: ");
     println!("\t k -> Generate new key and store in memory");
     println!("\t wk -> Write key stored in memory to file");
-    println!("\t rk  -> Read key from disk. Must be present in current directory.");
+    println!("\t rk -> Read key from disk. Must be present in current directory.");
 
     println!("Encryption: ");
     println!("\t e <message> -> Encrypt message using stored key, storing cipher in memory.");
@@ -125,7 +125,7 @@ pub fn init_cli_interface() {
                             println!("> Decryption result: {}", rsa::decrypt_str(&c, key.1, (key.0).0));
                         },
 
-                        Err(e) => println!("> Error reading cipher from disk"),
+                        Err(e) => println!("failed \n> Error reading cipher from disk"),
                     }
                 }
             },

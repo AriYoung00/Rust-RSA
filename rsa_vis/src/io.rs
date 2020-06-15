@@ -65,8 +65,7 @@ pub fn write_cipher_to_disk(cipher: &Vec<BigUint>, dest_path: &str) {
 }
 
 pub fn read_cipher_from_disk(src_path: &str) -> std::io::Result<Vec<BigUint>>{
-    let cipher_str = fs::read_to_string(src_path)
-        .expect("Something went wrong reading the file");
+    let cipher_str = fs::read_to_string(src_path)?;
     let cipher: Cipher = serde_json::from_str(&cipher_str)?;
 
     Ok(cipher.msg)
