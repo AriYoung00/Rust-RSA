@@ -23,8 +23,8 @@
 
 \section{Introduction}
 The goal of this project wass to re-implement the RSA hashing algorithm in Rust, separately from the existing crate. Initially, our goal was to have a cryptographically secure (if not fast) implementation of RSA. While at first we thought that we had achieved this goal, upon further review, there are several notable issues with our implementation, mainly relating to random number generation.
-\section{Theory}
 
+\section{Theory}
 \subsection{RSA Algorithm}
 Given two very large (in our case, 512-bit, ~150 digit) prime numbers $p$ and $q$, the product $n = pq$ cannot be factored in any reasonable amount of time using modern computing hardware (due to the lack of an efficient factoring algorithm). This is the basis for the RSA cryptographic system. \textit{TODO: This paragraph needs work, expansion}
 
@@ -50,7 +50,7 @@ An important note is that our random number generator is most definitely not sec
 \subsubsection{Generating large primes}
 Initially, we had intended to use prime number sieves and random selection to generate our primes $p$ and $q$. Various approaches were investigated, including using the \textit{Sieve of Eratosthenes} \cite{sieveeratosthenes}, and then the \textit{Sieve of Atkin} \cite{sieveatkin} when we realized that Eratosthenes was not sufficiently efficient. However, this approach has two main flaws. The first of these is that prime number sieves generate \textit{all} prime numbers under a certain boundary, and random selection from these sets could yield two values of drastically different sizes. Optimally, $p$ and $q$ should differ by (at most) a few orders of magnitude. The second (and more notable) flaw was that we only needed two primes, not all primes below some limit. Moreover, these primes must be extremely large, of a size where sieves become entirely impractical.
 
-Thus, we eventually settled on implementing the Miller-Rabin primality test. The Miller-Rabin primality test is an extension of Fermat's primality test, which in turn makes use of Fermat's little theorem. The Miller-Rabin test, although it is probabilistic rather than deterministic, corrects for the case in which Fermat's little theorem fails (for numbers that aren't coprime), and returns (within some degree of certainty) whether or not a particular number is prime. For large numbers, with a resonable number of iterations, the likelihood that the Miller-Rabin primality test fails is approximately equivalent to the likelihood that some random bit flip due to cosmic rays is introduced to relevant memory while the calculations are performed (see notes).
+Thus, we eventually settled on implementing the Miller-Rabin primality test. The Miller-Rabin primality test is an extension of Fermat's primality test, which in turn makes use of Fermat's little theorem. The Miller-Rabin test, although it is probabilistic rather than deterministic, corrects for the case in which Fermat's little theorem fails (for numbers that aren't coprime), and returns (within some degree of certainty) whether or not a particular number is prime. For large numbers, with a resonable number of iterations, the likelihood that the Miller-Rabin primality test fails is approximately equivalent to the likelihood that some random bit flip due to cosmic rays is introduced to relevant memory while the calculations are performed (see \hyperref[sec:rays]{notes}).
 
 
 %\section{Implementation}
@@ -71,23 +71,10 @@ Talk about big O to make him excited :o \textit{bruh this takes so long to run i
 \subsection{CLI}
 Show that using a new key will produce garbage
 
-\section{Implementation}
-\subsection{one subsection for each portion of program}
-Maybe put pseudocode?
-
-
-\section{Analysis}
-\subsection{Chi Squared Test}
-\subsection{Bitmap}
-\subsection{Runtime Analysis}
-Our implementation is very slow. The slowness either comes from Miller-Rabin or RNG of stupid big integers, but we're not sure which one exactly. This concludes our runtime analysis.
-
-
-\section{Usage}
-\subsection{CLI}
 
 \section{Notes}
 \subsection{Cosmic Rays}
+\label{sec:rays}
 An IBM study in the 1990s concluded that approximately one random bit flip will occur per month, per 256 MB of RAM, due to cosmic rays \cite{cosmic}. The probability of any given bit randomly flipping is thus $1 / 256000 / (30 * 24 * 60 * 60) \approx 4.519 * 10^{-11}$ per bit, per second. When generating a new key, we typically spend ~20 seconds running consecutive Miller-Rabin tests, on average. Our Miller-Rabin test runs on 512-bit integers. Thus, the probability of some random bit flip occuring on the input to our Miller-Rabin test while it runs is $4.519 * 10^{-11} * 20 * 512 \approx 4.628 * 10^{-7}$.
 
 The worst-case probability of any given Miller-Rabin test falsely identifying some random composite number as prime is approximately $4^{-k }$, where $k$ is the number of iterations of the test performed \cite{wolfram}. In our implementation, we perform 30 iterations. Thus, the (worst-case) probability of some composite number passing our implementation of Miller-Rabin is approximately $4^{-30} \approx 8.674 * 10^{-19}$, significantly lower than the probability of a random bit flip in relevant memory due to cosmic rays while it runs.
@@ -95,6 +82,7 @@ The worst-case probability of any given Miller-Rabin test falsely identifying so
 Note that this is extremely informal, and I am probably incorrect about some aspect of this (I never took statistics). However, also consider that the component size of modern computing hardware is much smaller than it was in the 1990s (and thus the probability of a random bit flip is significantly higher). Additionally, we are considering the worst-case probability of Miller-Rabin failing; from what I have read, the average probability is much closer to $8^{-k}$.
 
 
+\clearpage
 \section{References}
 \begin{thebibliography}{6}
 \bibitem{rsa_attacks}
