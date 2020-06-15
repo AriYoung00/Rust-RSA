@@ -12,16 +12,16 @@ The goal of this project is to re-implement the RSA hashing algorithm in Rust, s
     - [x] Using Sieve of Atkin ([wikipedia](https://en.wikipedia.org/wiki/Sieve_of_Atkin), [geeksforgeeks](https://www.geeksforgeeks.org/sieve-of-atkin/))
     - [ ] ~~Look at number field sieves?~~
     - [x] Update: Look at methods specific to cryptography [here](https://en.wikipedia.org/wiki/Generation_of_primes#Large_primes)
-- [ ] Implement RSA Encryption algorithm
+- [x] Implement RSA Encryption algorithm
     - [x] Using our RNG
-    - [ ] Using system RNG (e.g. /dev/urandom)
-    - [ ] Using Rust `rand` crate
-- [ ] Test RSA Implementation
-    - [ ] Compare performance (as in speed) with Rust `rsa` crate
-    - [ ] Test security of implementation using [NIST RSA2VS](https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Algorithm-Validation-Program/documents/dss2/rsa2vs.pdf)? (from FIPS 186-4)
+    - [ ] ~~using system RNG (e.g. /dev/urandom)~~
+    - [ ] ~~Using Rust `rand` crate~~
+- [ ]~~ Test RSA Implementation~~
+    - [ ] ~~Compare performance (as in speed) with Rust `rsa` crate~~
+    - [ ] ~~Test security of implementation using [NIST RSA2VS](https://csrc.nist.gov/CSRC/media/Projects/Cryptographic-Algorithm-Validation-Program/documents/dss2/rsa2vs.pdf)? (from FIPS 186-4)~~
 - [ ] ~~Make GUI?~~
-- [ ] Make CLI interface ❗
-- [ ] File IO stuff ❗
-    - [ ] Read/write keys from/to file ❗
-    - [ ] Read/write cipher from/to file ❗
-    - [ ] Encrypt files? ❗
+- [x] Make CLI interface ❗
+- [x] File IO stuff ❗
+    - [x] Read/write keys from/to file ❗
+    - [x] Read/write cipher from/to file ❗
+    - [ ] ~~Encrypt files?~~
