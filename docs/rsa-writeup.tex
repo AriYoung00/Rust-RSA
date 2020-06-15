@@ -64,7 +64,7 @@ Computing the Chi Squared value for our random number generator, the resulting $
 
 \subsection{Bitmap}
 \subsection{Runtime Analysis}
-Talk about big O to make him excited :o \textit{bruh this takes so long to run it might as well be big P}
+Our implementation of RSA is slow. Like very slow. Theoretically, it should not be that slow. The big-O of our algorithm overall is more or less to the tune of $O(n^2)$. However, in practice, it is slower than a geriatric slug. This is largely due to the shot-in-the-dark approach we're taking to prime generation (we could also filter obvious composites using a faster method before applying Miller-Rabin), and all of the memory copies forced upon us by Rust's concept of ownership.
 
 
 \section{Usage}
