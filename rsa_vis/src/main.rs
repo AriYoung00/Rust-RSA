@@ -53,14 +53,14 @@ fn test_rng(n: usize) {
     }
 }
 
-fn test_primes(n: usize) {
-    let mut i = 8;
-    while i < n {
-        println!("{} bit prime: {}", i, primes::gen_large_prime(i));
-        i += 8;
-    }
-}
-
-fn test_particular_prime(n: usize) {
-    println!("{} bit prime: {}", n, primes::gen_large_prime(n));
-}
+// fn test_primes(n: usize) {
+//     let mut i = 8;
+//     while i < n {
+//         println!("{} bit prime: {}", i, primes::gen_large_prime(i));
+//         i += 8;
+//     }
+// }
+//
+// fn test_particular_prime(n: usize) {
+//     println!("{} bit prime: {}", n, primes::gen_large_prime(n));
+// }
